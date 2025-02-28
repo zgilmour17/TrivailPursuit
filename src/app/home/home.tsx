@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./home.css";
-import { Input } from "../../components/ui/input";  
-import { Button } from "../../components/ui/button"; 
-import { Badge } from "../../components/ui/badge"; 
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Spinner } from "../../components/ui/spinner"; 
 import Items from 'src/lib/esports_trivia_questions.json';
+import { generateQuestion } from "C:/Users/jimmy/Desktop/code/TrivailPursuit/src/lib/utils";
 
 // Define the Home component
 const Home = () => {
+  const audioRef = useRef<HTMLAudioElement | null>(null); // For the correct answer music
+  const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
+
   // State to hold the list of badges
   const [badges, setBadges] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -18,6 +23,8 @@ const Home = () => {
   const [showQuestion, setShowQuestion] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answerState, setAnswerState] = useState<string>("");
+  const [bouncingAnswer, setBouncingAnswer] = useState<string | null>(null); // State to track the bouncing answer
+  const [loading, setLoading] = useState<boolean>(false);  // Loading state for the spinner
 
   // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,26 +52,51 @@ const Home = () => {
   };
 
   // Handle generating a trivia question
-  const handleGenerateQuestion = async () => { 
+  const handleGenerateQuestion = async () => {
     setShowQuestion(true); // Show the trivia question
+    setLoading(true);  // Set loading to true to show spinner
+    audioRef.current?.pause();
+    loadingAudioRef.current?.play(); // Play loading music
 
-    try {
+    try { 
       // Fetch the JSON file (adjust the path as necessary if hosted locally or remotely)
       const data = Items;
       // Pick a random question from the list
       const randomIndex = Math.floor(Math.random() * data.length);
-      const randomQuestion = data[randomIndex];
+      const response = await generateQuestion(badges)
+      const jsonString = response.match(/{[\s\S]*}/);
+      
+      console.log(response)
+      console.log(jsonString)
 
-      // Set the selected question and its answers
-      setTriviaQuestion(randomQuestion.question);
-      setTriviaAnswers(randomQuestion.choices);
-      setCorrectAnswer(randomQuestion.answer);
-      setSelectedAnswer(null);  // Reset selected answer
-      setAnswerState("");  // Reset answer state
+      if (jsonString) {
+        const randomQuestion = JSON.parse(jsonString[0]);
+         // Set the selected question and its answers
+        setTriviaQuestion(randomQuestion.question);
+        setTriviaAnswers(randomQuestion.choices);
+        setCorrectAnswer(randomQuestion.answer);
+        setSelectedAnswer(null);  // Reset selected answer
+        setAnswerState("");  // Reset answer state
+
+        // Stop the loading music when the question is done
+        //loadingAudioRef.current?.pause();
+      }else{
+        setTriviaQuestion("Error loading question...");
+        setTriviaAnswers(["Please try again later"]);
+        return;
+      }
+
+     
+
     } catch (error) {
       console.error("Error fetching the trivia questions:", error);
       setTriviaQuestion("Error loading question...");
       setTriviaAnswers(["Please try again later"]);
+
+      // Stop the loading music in case of error
+      //loadingAudioRef.current?.pause();
+    }finally {
+      setLoading(false);  // Set loading to false once the question has been set
     }
   };
 
@@ -73,6 +105,12 @@ const Home = () => {
     setSelectedAnswer(answer);
     if (answer === correctAnswer) {
       setAnswerState("correct");
+      setBouncingAnswer(answer); // Trigger bouncing for the correct answer
+      if (audioRef.current) {
+        loadingAudioRef.current?.pause(); // Play loading music
+
+        audioRef.current.play(); // Play the audio when the answer is correct
+      }
     } else {
       setAnswerState("incorrect");
     }
@@ -80,41 +118,51 @@ const Home = () => {
 
   return (
     <div className="h-screen w-full flex items-center justify-center">
+      {/* Audio elements for loading music and correct answer music */}
+      <audio ref={loadingAudioRef} src="/audio/loadingmusic.mp3" />
+      <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
+
       <div className="mx-auto p-16 bg-black my-auto flex items-center justify-center text-white shadow-lg rounded-lg">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-8">Trivail</h1>
 
           {/* Trivia question display */}
-          {showQuestion && triviaQuestion && (
-            <div className="mb-6">
-              <div className="question-text animate-typewriter">{triviaQuestion}</div>
-              <div className="mt-4">
-                {triviaAnswers.map((answer, index) => (
-                  <Button
-                    key={index}
-                    onClick={() => handleAnswerClick(answer)}
-                    className={`mb-2 w-full rounded-md text-white 
-                      ${selectedAnswer
-                        ? answer === correctAnswer
-                          ? 'bg-green-500'
-                          : 'bg-red-500'
-                        : 'bg-gray-800'
-                    } transition-all duration-300`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span>{answer}</span>
-                      {selectedAnswer && (
-                        answer === correctAnswer ? (
-                          <span className="text-white">&#10003;</span>  // Tick
-                        ) : answer === selectedAnswer ? (
-                          <span className="text-white">&#10007;</span>  // Cross
-                        ) : null
-                      )}
-                    </div>
-                  </Button>
-                ))}
-              </div>
+          {showQuestion && loading ? (
+            <div className="flex justify-center items-center h-24">
+              <Spinner /> {/* Show the Spinner while loading */}
             </div>
+          ) : (
+            triviaQuestion && (
+              <div className="mb-6">
+                <div className="question-text animate-typewriter">{triviaQuestion}</div>
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  {triviaAnswers.map((answer, index) => (
+                    <Button
+                      key={index}
+                      onClick={() => handleAnswerClick(answer)}
+                      className={`mb-2 w-full rounded-md text-white 
+                        ${selectedAnswer
+                          ? answer === correctAnswer
+                            ? 'bg-green-500'
+                            : 'bg-red-500'
+                          : 'bg-gray-800'
+                        }  ${bouncingAnswer === answer ? 'animate-bounce' : ''}`} // Apply bounce only to the correct answer
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="mr-2">{answer}</span>
+                        {selectedAnswer && (
+                          answer === correctAnswer ? (
+                            <span className="text-white">&#10003;</span>  // Tick
+                          ) : answer === selectedAnswer ? (
+                            <span className="text-white">X</span>  // Cross
+                          ) : null
+                        )}
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )
           )}
 
           {/* Input and badges section */}
