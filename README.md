@@ -1,6 +1,15 @@
 # TrivailPursuit
 goated game
 
+# .env Setup
+
+Add `.env` to root of repository and add open router API key to file.
+
+```
+# .env file
+REACT_APP_OPENROUTER_API_KEY = <YOUR_OPENROUTER_API_KEY>
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
