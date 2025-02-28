@@ -1,6 +1,10 @@
+import  techno  from "../../lib/techno.gif"; 
+
 const Spinner = () => {
     return (
-      <div role="status">
+      <div>
+    <div >
+    <div role="status">
         <svg
           aria-hidden="true"
           className="inline w-8 h-8 text-gray-200 animate-spin dark:text-white-600 fill-red-600"
@@ -19,6 +23,11 @@ const Spinner = () => {
         </svg>
         <span className="sr-only">Loading...</span>
       </div>
+        Generating Your Question...
+    </div>      
+    <img src={techno} alt="Description of GIF" />
+    </div>
+    
     );
   };
   
