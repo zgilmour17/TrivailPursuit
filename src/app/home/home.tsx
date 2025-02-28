@@ -5,8 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Spinner } from "../../components/ui/spinner"; 
 import Items from 'src/lib/esports_trivia_questions.json';
-import { generateQuestion } from "../../lib/utils";
-
+import { generateQuestion } from "src/lib/utils";
 // Define the Home component
 const Home = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null); // For the correct answer music
