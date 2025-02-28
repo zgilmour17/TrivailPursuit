@@ -4,7 +4,13 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
-
+export function dimensions(n:number): [number, number] {
+  if (n === 0) return [0,0]
+  var rows = Math.floor(Math.sqrt(n));
+  while(n % rows != 0) rows -= 1;
+  const cols = n/rows;
+  return [rows,cols];
+}
 export async function askAI(prompt: string): Promise<string> {
   const msg = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",

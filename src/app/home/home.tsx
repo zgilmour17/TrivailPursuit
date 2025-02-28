@@ -1,19 +1,23 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./home.css";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Spinner } from "../../components/ui/spinner"; 
 import Items from 'src/lib/esports_trivia_questions.json';
-import { generateQuestion } from "C:/Users/jimmy/Desktop/code/TrivailPursuit/src/lib/utils";
+import { generateQuestion } from "src/lib/utils";
+import { dimensions } from "src/lib/utils";
+import {  ResizableGrid } from "../../components/ui/grid";
+
 
 // Define the Home component
 const Home = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null); // For the correct answer music
   const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
-
+  const [rows, setRows] = useState(0); // Example initial value
+  const [cols, setCols] = useState(0); // Example initial value
   // State to hold the list of badges
-  const [badges, setBadges] = useState<string[]>([]);
+  const [badges, setBadges] = useState<{ name: string; id: number }[]>([]);
   const [inputValue, setInputValue] = useState("");
 
   // State for the trivia question and its answers
@@ -25,23 +29,52 @@ const Home = () => {
   const [answerState, setAnswerState] = useState<string>("");
   const [bouncingAnswer, setBouncingAnswer] = useState<string | null>(null); // State to track the bouncing answer
   const [loading, setLoading] = useState<boolean>(false);  // Loading state for the spinner
+  const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
 
   // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
+    useEffect(() => {
+      const [newRows, newCols] = dimensions(badges.length);
+      setRows(newRows);
+      setCols(newCols);
+      console.log(badges.length, badges); // Logs the updated length after state is set
+      console.log(newRows, newCols); // Logs the calculated rows and cols
+    }, [badges]);
+
   // Handle adding a badge
   const handleAddBadge = () => {
-    if (inputValue.trim() && !badges.includes(inputValue)) {
-      setBadges((prevBadges) => [...prevBadges, inputValue]);
-      setInputValue("");  // Reset input field
+    // Check if input value is not empty and is not already in the badge names
+    if (inputValue.trim() && !badges.map((x) => x.name).includes(inputValue)) {
+      
+      // Calculate the new id by checking the length of previous badges
+      let newId;
+      if (badges.length > 0) {
+        newId = badges[badges.length - 1].id + 1;  // Increment last badge id
+      } else {
+        newId = 1;  // Start with id 1 if no badges exist
+      }
+      // Add the new badge with name and id
+      const newBadge = { name: inputValue, id: newId };
+      console.log(newBadge)
+
+      // Update the badges state with the new badge
+      setBadges((prevBadges) => {
+        return [...prevBadges, newBadge];  // Add the new badge to the array
+      });
+  
+      // Clear the input value field after adding the badge
+      setInputValue("");  
     }
   };
+  
+  
 
   // Handle removing a badge
   const handleRemoveBadge = (badge: string) => {
-    setBadges(badges.filter((b) => b !== badge));
+    setBadges(badges.filter((b) => b.name !== badge));
   };
 
   // Handle adding a badge on pressing 'Enter'
@@ -63,7 +96,7 @@ const Home = () => {
       const data = Items;
       // Pick a random question from the list
       const randomIndex = Math.floor(Math.random() * data.length);
-      const response = await generateQuestion(badges)
+      const response = await generateQuestion(badges.map((x) => x.name))
       const jsonString = response.match(/{[\s\S]*}/);
       
       console.log(response)
@@ -82,7 +115,7 @@ const Home = () => {
         //loadingAudioRef.current?.pause();
       }else{
         setTriviaQuestion("Error loading question...");
-        setTriviaAnswers(["Please try again later"]);
+        //setTriviaAnswers(["Please try again later"]);
         return;
       }
 
@@ -91,7 +124,7 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching the trivia questions:", error);
       setTriviaQuestion("Error loading question...");
-      setTriviaAnswers(["Please try again later"]);
+     // setTriviaAnswers(["Please try again later"]);
 
       // Stop the loading music in case of error
       //loadingAudioRef.current?.pause();
@@ -116,9 +149,16 @@ const Home = () => {
     }
   };
 
+  const handleBadgeSelected = (badge: string) => {
+    setSelectedBadge(badge);
+    console.log('Selected Badge:', badge);
+  };
+
   return (
     <div className="h-screen w-full flex items-center justify-center">
-      {/* Audio elements for loading music and correct answer music */}
+    
+
+            {/* Audio elements for loading music and correct answer music */}
       <audio ref={loadingAudioRef} src="/audio/loadingmusic.mp3" />
       <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
 
@@ -181,15 +221,15 @@ const Home = () => {
           </div>
 
           {/* Display the badges underneath the input */}
-          <div className="flex flex-wrap gap-2 ">
+          <div className="flex flex-wrap gap-2 mb-8">
             {badges.map((badge, index) => (
               <Badge
                 key={index}
                 className="bg-gray-700 text-white px-4 py-2 rounded-full flex items-center gap-2"
               >
-                {badge}
+                {badge.name}
                 <button
-                  onClick={() => handleRemoveBadge(badge)}
+                  onClick={() => handleRemoveBadge(badge.name)}
                   className="text-red-500 hover:text-red-700"
                 >
                   X
@@ -197,6 +237,10 @@ const Home = () => {
               </Badge>
             ))}
           </div>
+          <ResizableGrid rows={rows} cols = {cols} badges = {badges}         onBadgeSelected={handleBadgeSelected} // Pass the callback to child
+          ></ResizableGrid>
+      {selectedBadge && <div className="mt-4">Selected Badge: {selectedBadge}</div>}
+
         </div>
       </div>
     </div>
