@@ -7,6 +7,8 @@ import { Spinner } from "../../components/ui/spinner";
 import Items from 'src/lib/esports_trivia_questions.json';
 import { generateQuestion } from "src/lib/utils";
 import BeerComponent from "../../components/beer";
+import DrinkingRules from "../../components/ui/drinkingrules";
+import SessionForm from "../../components/ui/session"
 
 // Define the Home component
 const Home = () => {
@@ -113,10 +115,18 @@ const Home = () => {
       {/* Audio elements for loading music and correct answer music */}
       <audio ref={loadingAudioRef} src="/audio/loadingmusic.mp3" />
       <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
+      {/* <div className="mx-auto p-16 bg-black my-auto flex items-center justify-center text-white shadow-lg rounded-lg max-w-[20vw] absolute right-[10%]">
+        <div className="flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-extrabold tracking-tight  mb-8">Rules</h1>
 
-      <div className="mx-auto p-16 bg-black my-auto flex items-center justify-center text-white shadow-lg rounded-lg">
+      <DrinkingRules></DrinkingRules>
+      
+      
+      </div>
+      </div> */}
+      <div className="mx-auto p-16 bg-black my-auto flex items-center justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[95%]">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-8">Trivail</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-8">Trivail Pursuit</h1>
 
           {/* Trivia question display */}
           {showQuestion && loading ? (
@@ -127,7 +137,7 @@ const Home = () => {
             triviaQuestion && (
               <div className="mb-6">
                 <div className="question-text animate-typewriter">{triviaQuestion}</div>
-                <div className="mt-4 grid grid-cols-2 gap-4">
+                <div className="mt-4 grid grid-cols-2 gap-4 max-md:grid-cols-1">
                   {triviaAnswers.map((answer, index) => (
                     <Button
                       key={index}
@@ -158,13 +168,13 @@ const Home = () => {
           )}
 
           {/* Input and badges section */}
-          <div className="flex flex-row space-x-4">
+          <div className="flex flex-row md:space-x-4 max-md:flex-col">
             <Input 
               value={inputValue}
               onChange={handleInputChange}
               onKeyDown={handleKeyPress}
               placeholder="Enter your themes here"
-              className="mb-4 w-96 p-3 rounded-md bg-gray-800 text-white placeholder-gray-400"
+              className="mb-4 w-full p-3 rounded-md bg-gray-800 text-white placeholder-gray-400"
             />
             
             <Button 
@@ -191,7 +201,6 @@ const Home = () => {
               </Badge>
             ))}
           </div>
-          <BeerComponent></BeerComponent>
         </div>
       </div>
     </div>

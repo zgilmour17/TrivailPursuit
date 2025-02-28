@@ -22,13 +22,29 @@ const BeerComponent = () => {
   const updateBeerLevel = (percentage: number) => {
     const video = videoRef.current;
     if (!video || !videoLoaded) return;
-
+    video.currentTime = 0;
     const frameIndex = Math.round(((100 - percentage) / 100) * totalFrames);
     const frameTime = (frameIndex / totalFrames) * video.duration;
-
-    video.currentTime = frameTime; // Seek to correct frame
-    video.pause(); // Pause at that frame
+  
+    // If the current time is less than the frame time, keep playing the video
+    if (video.currentTime < frameTime) {
+      console.log('its play time')
+      video.play();
+    
+    }
+  
+    // When the video reaches the desired frame, pause it
+    video.ontimeupdate = () => {
+      if (video.currentTime >= frameTime) {
+        video.pause();  // Pause when the frame is reached
+        video.ontimeupdate = null;  // Remove the event listener
+      }
+    };
+  
+    // Set the time to the frame time, but don't pause yet
+    // video.currentTime = frameTime;
   };
+  
 
   const handleBeerClick = (event: React.MouseEvent<HTMLVideoElement>) => {
     const video = videoRef.current;
