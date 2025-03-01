@@ -1,10 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: [
-    "./src/**/*.{ts,tsx}",     
-  ], 
-    theme: {
+  content: ["./src/**/*.{ts,tsx}"],
+  theme: {
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -46,7 +44,34 @@ module.exports = {
         md: `calc(var(--radius) - 2px)`,
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        typing: {
+          "0%": {
+            width: "0%",
+            visibility: "hidden",
+          },
+          "100%": {
+            width: "100%",
+          },
+        },
+        blink: {
+          "50%": {
+            borderColor: "transparent",
+          },
+          "100%": {
+            borderColor: "white",
+          },
+        },
+        "fade-in": {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+      },
+      animation: {
+        fadein: "fade-in 3s ease-in-out ",
+        typing: "typing 1s steps(50) ",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
