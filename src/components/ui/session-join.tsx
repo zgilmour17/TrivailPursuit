@@ -36,7 +36,7 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
         Join Session
       </h1>
       <form onSubmit={handleJoin} className="space-y-4">
-        <div className="flex items-start space-x-4">
+        <div className="flex items-start space-x-4 max-md:flex-col">
           {/* Input fields */}
           <div className="flex-1 space-y-4">
             <div>
