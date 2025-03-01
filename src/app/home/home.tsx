@@ -175,12 +175,9 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
                           : "bg-red-500"
                         : "bg-gray-800"
                     } 
-                    ${bouncingAnswer === answer ? "animate-bounce " : ""}
+                    ${bouncingAnswer === answer ? "!animate-bounce " : ""}
                     ${isAnswered ? "pointer-events-none" : ""}
                     animate-fadein`}
-                    style={{
-                      transitionDelay: `${1000 + index * 500}ms`, // Start with 1 second delay, then add 500ms for each index
-                    }}
                   >
                     <div className="flex justify-between items-center">
                       <span className="mr-2">{answer}</span>
