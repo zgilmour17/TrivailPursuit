@@ -35,8 +35,8 @@ export async function askAI(prompt: string): Promise<string> {
 }
 
 export async function generateQuestion(topic: string): Promise<string> {
-  const promptTemplate = `Generate a multiple choice trivia question related to this topic: ${topic}. 
-    Generate 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each. you must respond in the JSON format 
+  const promptTemplate = `respond with a multiple choice trivia question related to this topic: ${topic}. 
+    Give 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each. you must respond in the JSON format 
     {
       "question": "<ANSWER>",
       "choices": [
@@ -47,5 +47,12 @@ export async function generateQuestion(topic: string): Promise<string> {
       ],
       "answer": "<ACTUAL_ANSWER>"
     }`;
+  return askAI(promptTemplate);
+}
+
+export async function generateRemark(wrong: boolean): Promise<string> {
+  const promptTemplate = wrong
+    ? `taking on the personality of a uk grime artist respond with a harsh single line insult for someone who just got a multiple choice trivia question wrong`
+    : `taking on the personality of a uk grime artist respond with a single line compliment for someone who just got a multiple choice trivia question correct`;
   return askAI(promptTemplate);
 }

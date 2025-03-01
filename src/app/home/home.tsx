@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
 import { Spinner } from "../../components/ui/spinner";
 import Items from "src/lib/esports_trivia_questions.json";
-import { generateQuestion } from "src/lib/utils";
+import { generateQuestion, generateRemark } from "src/lib/utils";
 import BeerComponent from "../../components/beer";
 import DrinkingRules from "../../components/ui/drinkingrules";
 import { SessionFormAnswers } from "../../components/ui/session-join";
@@ -34,6 +34,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
   const [bouncingAnswer, setBouncingAnswer] = useState<string | null>(null); // State to track the bouncing answer
   const [loading, setLoading] = useState<boolean>(false); // Loading state for the spinner
   const [isAnswered, setIsAnswered] = useState(false); // Track if an answer has been selected
+  const [remark, setRemark] = useState<string | null>(null);
 
   // Handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,17 +48,6 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
       setInputValue(""); // Reset input field
     }
   };
-
-  useEffect(() => {
-    if (answers.topic && !badges.includes(answers.topic)) {
-      setBadges((prevBadges) => {
-        if (!prevBadges.includes(answers.topic)) {
-          return [...prevBadges, answers.topic];
-        }
-        return prevBadges;
-      });
-    }
-  }, []); // Empty dependency array -> Runs only on mount
 
   // Handle removing a badge
   const handleRemoveBadge = (badge: string) => {
@@ -73,6 +63,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
 
   // Handle generating a trivia question
   const handleGenerateQuestion = async () => {
+    setRemark(null);
     setShowQuestion(true); // Show the trivia question
     setLoading(true); // Set loading to true to show spinner
     audioRef.current?.pause();
@@ -110,12 +101,15 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
   };
 
   // Handle answer selection
-  const handleAnswerClick = (answer: string) => {
+  const handleAnswerClick = async (answer: string) => {
     setSelectedAnswer(answer);
     if (answer === correctAnswer) {
       setAnswerState("correct");
       setBouncingAnswer(answer); // Trigger bouncing for the correct answer
       setIsAnswered(true); // Mark as answered
+      var remark = await generateRemark(false);
+      setRemark(remark); // Generate remark for correct answer
+
       if (audioRef.current) {
         loadingAudioRef.current?.pause(); // Play loading music
         audioRef.current.play(); // Play the audio when the answer is correct
@@ -123,8 +117,21 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
     } else {
       setAnswerState("incorrect");
       setIsAnswered(true); // Mark as answered
+      var remark = await generateRemark(true);
+      setRemark(remark); // Generate remark for correct answer
     }
   };
+
+  useEffect(() => {
+    if (answers.topic && !badges.includes(answers.topic)) {
+      setBadges((prevBadges) => {
+        if (!prevBadges.includes(answers.topic)) {
+          return [...prevBadges, answers.topic];
+        }
+        return prevBadges;
+      });
+    }
+  }, [answerState]);
 
   return (
     <div>
@@ -227,6 +234,12 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
         <Button onClick={handleGenerateQuestion} className="w-full">
           Generate Question
         </Button>
+        {/* Display the remark below the button */}
+        {remark && answerState !== "" && (
+          <div className="animate-typing overflow-hidden whitespace-nowrap text-white mt-4">
+            {remark}
+          </div>
+        )}
       </div>
     </div>
   );
