@@ -85,9 +85,9 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                             />
                         </div>
                     </div>
-                    <div className="flex-shrink-0">
+                    {/* <div className="flex-shrink-0">
                         <BeerComponent />
-                    </div>
+                    </div> */}
                 </div>
                 <Button type="submit" className="w-full">
                     Join

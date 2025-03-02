@@ -48,13 +48,13 @@ function App() {
             className="bg-cover bg-center min-h-screen"
             style={{ backgroundImage: `url(${backgroundImage}` }}
         >
-            <div className="h-screen w-full flex items-center justify-center">
-                <div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[95%] flex-col relative">
+            <div className="h-screen w-full flex items-center justify-center absolute z-[0]">
+                <div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[95%] flex-col relative card min-w-[25vw]">
                     <h1 className="mx-auto text-4xl font-extrabold tracking-tight mb-8 ">
                         <img
                             src="./title.png"
                             alt="Title Image"
-                            className="w-[250px]"
+                            className="w-[250px] fade-all-bottom"
                         />
                     </h1>
 
