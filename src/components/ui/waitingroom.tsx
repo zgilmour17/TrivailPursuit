@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "./button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 
 interface WaitingRoomProps {
     onComplete: () => void;
@@ -50,7 +50,10 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
                             key={index}
                             className="p-2 rounded-md text-center text-blue-500 animate-pulse text-lg font-bold"
                         >
-                            {player}
+                            {player}{" "}
+                            {/* <button className="text-red-500 hover:text-red-700 my-auto">
+                                <X></X>
+                            </button> */}
                         </div>
                     ))}
                 </div>

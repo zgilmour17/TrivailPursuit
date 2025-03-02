@@ -315,7 +315,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
           ))}
         </div> */}
                 <Button onClick={handleGenerateQuestion} className="w-full">
-                    Generate Question
+                    Begin Round!
                 </Button>
                 {/* Display the remark below the button */}
                 {/* {remark && answerState !== "" && isFadingOut && (
