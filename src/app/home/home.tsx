@@ -242,7 +242,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
                         <div className="mb-6">
                             <Progress value={progress} />
 
-                            <div className="animate-typing overflow-hidden whitespace-nowrap">
+                            <div className="text-start animate-typing overflow-hidden whitespace-nowrap">
                                 {triviaQuestion}
                             </div>
                             <div className="mt-4 grid grid-cols-2 gap-4 max-md:grid-cols-1">
