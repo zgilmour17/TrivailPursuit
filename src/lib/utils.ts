@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import test from "./esports_trivia_questions.json";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,6 +36,10 @@ export async function askAI(prompt: string): Promise<string> {
 }
 
 export async function generateQuestion(topic: string): Promise<string> {
+  var testv = Math.floor(Math.random() * 100) + 1;
+  var item = JSON.stringify(test[testv]);
+  console.log(item);
+  return item;
   const promptTemplate = `respond with a multiple choice trivia question related to this topic: ${topic}. 
     Give 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each. you must respond in the JSON format 
     {
