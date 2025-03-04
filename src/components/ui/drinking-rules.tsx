@@ -1,10 +1,6 @@
 import React, { useState } from "react";
-import { Button } from "../ui/button";
-import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
-} from "../ui/hover-card";
+import { Button } from "./button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
 
 const DrinkingRules = () => {
     const rules = [

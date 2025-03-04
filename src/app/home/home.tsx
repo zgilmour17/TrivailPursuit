@@ -6,8 +6,20 @@ import { Spinner } from "../../components/ui/spinner";
 import { generateQuestion } from "src/lib/utils";
 
 import { SessionFormAnswers } from "../../components/ui/session-join";
-import { ChevronLeft } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronUp, List } from "lucide-react";
 
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "../../components/ui/drawer";
+import DrinkingRules from "../../components/ui/drinking-rules";
+import RulesDrawer from "@/components/ui/rules-drawer";
 interface HomeProps {
     answers: SessionFormAnswers;
     onBack: () => void; // Add the back handler
@@ -152,7 +164,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
             </Button>
 
             {/* <SessionForm></SessionForm> */}
-            <audio ref={loadingAudioRef} src="/audio/loadingmusic.mp3" />
+            <audio ref={loadingAudioRef} src="/audio/dontbea20.mp3" />
             <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
             <div className="">
                 {/* Trivia question display */}
@@ -219,11 +231,13 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
 
                 <Button
                     onClick={handleGenerateQuestion}
-                    className="w-full"
+                    className="w-full "
                     disabled={!isAnswered}
                 >
                     Begin Round!
                 </Button>
+
+                <RulesDrawer></RulesDrawer>
             </div>
         </div>
     );
