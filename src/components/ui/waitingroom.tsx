@@ -48,7 +48,7 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
                     {players.map((player, index) => (
                         <div
                             key={index}
-                            className="p-2 rounded-md text-center text-blue-500 animate-pulse text-lg font-bold"
+                            className="p-2 rounded-md text-center text-white neon-blue text-lg font-bold"
                         >
                             {player}{" "}
                             {/* <button className="text-red-500 hover:text-red-700 my-auto">
