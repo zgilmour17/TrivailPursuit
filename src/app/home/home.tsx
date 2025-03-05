@@ -8,18 +8,8 @@ import { generateQuestion } from "src/lib/utils";
 import { SessionFormAnswers } from "../../components/ui/session-join";
 import { BookOpen, ChevronLeft, ChevronUp, List } from "lucide-react";
 
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "../../components/ui/drawer";
 import DrinkingRules from "../../components/ui/drinking-rules";
-import RulesDrawer from "@/components/ui/rules-drawer";
+import RulesDrawer from "../../components/ui/rules-drawer";
 interface HomeProps {
     answers: SessionFormAnswers;
     onBack: () => void; // Add the back handler
@@ -159,6 +149,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
                 className="absolute top-4 left-4"
                 onClick={onBack}
                 size="icon"
+                variant="secondary"
             >
                 <ChevronLeft />
             </Button>

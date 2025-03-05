@@ -33,6 +33,7 @@ const SessionHostForm: React.FC<SessionHostFormProps> = ({
                 className="absolute top-4 left-4"
                 onClick={onBack}
                 size="icon"
+                variant="secondary"
             >
                 <ChevronLeft />
             </Button>
@@ -92,7 +93,7 @@ const SessionHostForm: React.FC<SessionHostFormProps> = ({
                     </div> */}
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" variant="secondary">
                     Host
                 </Button>
             </form>
