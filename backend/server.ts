@@ -1,17 +1,110 @@
 import express from "express";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import http from "http";
+import { WebSocketServer } from "ws";
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+import { parse } from "cookie";
 
+// setup .env
 dotenv.config();
+
+const PORT = process.env.PORT || 3000;
 
 interface AIResponse {
 	choices: { message: { content: string } }[];
 }
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const sessionMiddleware = session({
+	secret: "your-secret-key",
+	resave: false,
+	saveUninitialized: true,
+	cookie: { secure: false, maxAge: 1000 * 60 * 60 }, // 1-hour session
+});
 
-app.use(express.json());
+const app = express();
+app.use(cookieParser());
+app.use(sessionMiddleware); // Apply session middleware
+app.use(express.json()); // Still needed for REST API requests
+
+const server = http.createServer(app); // Create HTTP server for WebSocket
+
+// Create WebSocket server and integrate with Express sessions
+const wss = new WebSocketServer({ server });
+
+const clients = new Map(); // Track connected players
+
+// Function to use Express sessions inside WebSockets
+const getSession = (
+	req: any
+): Promise<
+	session.Session & {
+		game?: { id: number; players: { id: number; name: string }[] };
+	}
+> => {
+	return new Promise((resolve) => {
+		sessionMiddleware(req, {} as any, () => {
+			resolve(
+				req.session as session.Session & {
+					game?: {
+						id: number;
+						players: { id: number; name: string }[];
+					};
+				}
+			);
+		});
+	});
+};
+
+// WebSocket connection handling
+wss.on("connection", async (ws, req) => {
+	const cookies = parse(req.headers.cookie || "");
+	const sessionId = cookies["connect.sid"];
+	const session = await getSession(req);
+
+	// Ensure a game session exists
+	if (!sessionId) {
+		ws.send(JSON.stringify({ type: "error", message: "No session found" }));
+		ws.close();
+		return;
+	}
+
+	session.game = session.game || { id: Date.now(), players: [] };
+
+	// Add a new player
+	const player = {
+		id: Date.now(),
+		name: `Player${session.game.players.length + 1}`,
+	};
+	session.game.players.push(player);
+
+	// Save session
+	session.save();
+
+	clients.set(ws, { session, player });
+
+	console.log(`${player.name} joined the game!`);
+	broadcast({ type: "playerJoined", player });
+
+	ws.on("message", (message) => {
+		const data = JSON.parse(message.toString());
+		if (data.type === "answer") {
+			console.log(`${player.name} answered: ${data.answer}`);
+			// TODO: edit this broadcast to only broadcast to host client?
+			broadcast({
+				type: "answerReceived",
+				player: player.name,
+				answer: data.answer,
+			});
+		}
+	});
+
+	ws.on("close", () => {
+		console.log(`${player.name} disconnected`);
+		clients.delete(ws);
+		broadcast({ type: "playerLeft", player: player.name });
+	});
+});
 
 async function askAI(prompt: string): Promise<string> {
 	const response = await fetch(
@@ -35,7 +128,6 @@ async function askAI(prompt: string): Promise<string> {
 			}),
 		}
 	);
-
 	const data = (await response.json()) as AIResponse; // Type assertion
 
 	return data.choices[0].message.content;
@@ -56,10 +148,22 @@ app.post("/generate-question", async (req, res) => {
 
 	try {
 		const question = await askAI(promptTemplate);
-		res.json(JSON.parse(question));
+		const jsonString = question.match(/{[\s\S]*}/);
+		if (jsonString) {
+			res.json(JSON.parse(jsonString[0]));
+		}
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({ error: "Failed to generate question" });
 	}
+});
+
+app.post("/generate-rule", async (req, res) => {
+	const { numRules } = req.body;
+	if (!numRules)
+		return res.status(400).json({ error: "numRules is required" });
+
+	const promptTemplate = ``; // TODO
 });
 
 app.post("/generate-remark", async (req, res) => {
@@ -79,6 +183,13 @@ app.post("/generate-remark", async (req, res) => {
 	}
 });
 
-app.listen(PORT, () => {
-	console.log(`Server running on port ${PORT}`);
+// Broadcast a message to all connected players
+function broadcast(data: any) {
+	wss.clients.forEach((client) => {
+		client.send(JSON.stringify(data));
+	});
+}
+
+server.listen(3000, () => {
+	console.log("Server running on http://localhost:3000");
 });
