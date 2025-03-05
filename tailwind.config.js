@@ -66,9 +66,14 @@ module.exports = {
                     "0%": { opacity: 0 },
                     "100%": { opacity: 1 },
                 },
+                "fade-out": {
+                    "0%": { opacity: 0 },
+                    "100%": { opacity: 1 },
+                },
             },
             animation: {
                 fadein: "fade-in 3s ease-in-out ",
+                fadeout: "fade-out 3s ease-in-out ",
                 typing: "typing 1s steps(100) ",
                 typingslow: "typing 3s steps(100) 0s",
                 typingslowleaving: "typing 3s steps(100) 0s 1 reverse",

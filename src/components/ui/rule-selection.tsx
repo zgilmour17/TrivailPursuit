@@ -61,26 +61,49 @@ const RuleCard = ({
 }) => {
     return (
         <div className="flex flex-col w-full items-center relative">
-            <div className="box">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <div className="content">
-                    <h2>{rules[ruleIndex].title} </h2>
-                    <p>
-                        <a>{rules[ruleIndex].description}</a>
-                    </p>
-                    <Button
-                        variant="ghost"
-                        onClick={onRefresh}
-                        disabled={isRefreshing}
-                        className="!bg-transparent cursor-pointer animate-fadein"
-                    >
-                        <RefreshCw className="text-white" />
-                    </Button>
-                </div>
-            </div>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <div className="box animate-fadein">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <div className="content">
+                            <h2 className="font-bold">
+                                {rules[ruleIndex].title}{" "}
+                            </h2>
+                            <p>
+                                <a>{rules[ruleIndex].description}</a>
+                            </p>
+                        </div>
+                    </div>
+                </DialogTrigger>
+
+                <DialogContent
+                    className="sm:max-w-[425px]"
+                    onOpenAutoFocus={(e) => e.preventDefault()}
+                >
+                    <DialogHeader>
+                        <DialogTitle className="text-white text-center">
+                            Choose a rule to replace
+                        </DialogTitle>
+
+                        <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                    <DrinkingRules />
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button
+                                className="w-full my-auto"
+                                type="submit"
+                                variant="secondary"
+                            >
+                                Go Back
+                            </Button>
+                        </DialogClose>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             {/* <Card className=" !w-[350px] h-[300px]  box">
 				
                 <CardHeader>
@@ -129,9 +152,9 @@ const RuleCard = ({
                 variant="ghost"
                 onClick={onRefresh}
                 disabled={isRefreshing}
-                className="!bg-transparent cursor-pointer animate-fadein"
+                className="!bg-transparent cursor-pointer animate-fadein mt-20 disabled:opacity-0"
             >
-                <RefreshCw className="text-white" />
+                <RefreshCw className="text-white !h-[35px] !w-[35px]" />
             </Button>
         </div>
     );
@@ -161,7 +184,7 @@ const RuleSelection = () => {
                     } as React.CSSProperties
                 }
             >
-                You've been chosen to choose a rule
+                You've been chosen to select a rule
             </span>
             <div className="flex flex-row space-x-12 relative">
                 {ruleIndexes.map((ruleIndex, i) => (
@@ -173,7 +196,7 @@ const RuleSelection = () => {
                     />
                 ))}
             </div>
-            <Button className="mt-4 w-fit" variant="secondary">
+            <Button className="mt-4 w-fit animate-fadein" variant="secondary">
                 Pass <CircleX />
             </Button>
             <RulesDrawer />
