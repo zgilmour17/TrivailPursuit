@@ -1,8 +1,17 @@
-import React, { useState } from "react";
-import { Button } from "./button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
+import { DialogClose } from "@radix-ui/react-dialog";
+import React from "react";
+import { Button } from "../ui/button";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "../ui/hover-card";
 
-const DrinkingRules = () => {
+interface DrinkingRulesProps {
+    onComplete: (index: number) => void;
+}
+
+const DrinkingRules: React.FC<DrinkingRulesProps> = ({ onComplete }) => {
     const rules = [
         {
             title: "Thumb Master",
@@ -36,9 +45,15 @@ const DrinkingRules = () => {
             {rules.map((rule, index) => (
                 <HoverCard>
                     <HoverCardTrigger asChild>
-                        <Button variant="link" className="text-white">
-                            {index + 1}. {rule.title}
-                        </Button>
+                        <DialogClose>
+                            <Button
+                                variant="link"
+                                className="text-white"
+                                onClick={() => onComplete(index)}
+                            >
+                                {index + 1}. {rule.title}
+                            </Button>
+                        </DialogClose>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80 ">
                         <div className="flex flex-col">

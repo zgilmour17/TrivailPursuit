@@ -1,17 +1,19 @@
+import { BookOpen } from "lucide-react";
+import { Button } from "../ui/button";
 import {
     Drawer,
-    DrawerTrigger,
+    DrawerClose,
     DrawerContent,
+    DrawerFooter,
     DrawerHeader,
     DrawerTitle,
-    DrawerFooter,
-    DrawerClose,
-} from "./drawer";
-import { Button } from "./button";
-import { BookOpen } from "lucide-react";
+    DrawerTrigger,
+} from "../ui/drawer";
 import DrinkingRules from "./drinking-rules";
 
 const RulesDrawer = () => {
+    const handleOnComplete = (index: number) => {};
+
     return (
         <Drawer>
             {/* Button at the bottom */}
@@ -35,7 +37,7 @@ const RulesDrawer = () => {
                         </DrawerTitle>
                     </DrawerHeader>
 
-                    <DrinkingRules />
+                    <DrinkingRules onComplete={handleOnComplete} />
 
                     <DrawerFooter>
                         <DrawerClose asChild>

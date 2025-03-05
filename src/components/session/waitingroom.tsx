@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Button } from "./button";
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 
 interface WaitingRoomProps {
     onComplete: () => void;

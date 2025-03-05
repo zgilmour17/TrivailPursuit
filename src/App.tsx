@@ -1,18 +1,19 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import backgroundImage from "src/lib/test3.jpg";
 
 import "./App.css";
 import Home from "./app/home/home";
-import { SessionHostForm } from "./components/ui/session-host"; // Add import for host form
-import { SessionJoinForm } from "./components/ui/session-join"; // Add import for join form
-import { SessionChoice } from "./components/ui/session-choice";
-import { TrivailWaitingRoom } from "./components/ui/waitingroom"; // Add import for waiting room component
-import RuleSelection from "./components/ui/rule-selection";
+
+import RuleSelection from "./components/rules/rule-selection";
+import { SessionChoice } from "./components/session/session-choice";
+import { SessionHostForm } from "./components/session/session-host";
+import { SessionJoinForm } from "./components/session/session-join";
+import { TrivailWaitingRoom } from "./components/session/waitingroom";
 
 function App() {
-    const [step, setStep] = useState<"choice" | "form" | "waiting" | "home">(
-        "choice"
-    );
+    const [step, setStep] = useState<
+        "choice" | "form" | "waiting" | "home" | "ruleSelection"
+    >("choice");
     const [formAnswers, setFormAnswers] = useState<any>(null);
     const [sessionType, setSessionType] = useState<"host" | "join" | null>(
         null
@@ -45,6 +46,13 @@ function App() {
         setStep("home");
     };
 
+    const handleRuleSelection = () => {
+        setStep("home");
+    };
+
+    const handleRuleSelectionEvent = () => {
+        setStep("ruleSelection");
+    };
     return (
         <div
             className="bg-cover bg-center min-h-screen"
@@ -59,7 +67,7 @@ function App() {
                         alt="Title Image"
                         className="w-[250px] fade-all-bottom mx-auto"
                     />
-                    {/* 
+
                     {step === "choice" && (
                         <SessionChoice
                             onSelect={handleSessionTypeSelect} // Pass handler to handle session type selection
@@ -88,9 +96,18 @@ function App() {
                     )}
 
                     {step === "home" && (
-                        <Home answers={formAnswers} onBack={handleBack} />
-                    )} */}
-                    <RuleSelection></RuleSelection>
+                        <Home
+                            answers={formAnswers}
+                            onBack={handleBack}
+                            onRuleSelection={handleRuleSelectionEvent}
+                        />
+                    )}
+
+                    {step === "ruleSelection" && (
+                        <RuleSelection
+                            onComplete={handleRuleSelection}
+                        ></RuleSelection>
+                    )}
                 </div>
             </div>
         </div>

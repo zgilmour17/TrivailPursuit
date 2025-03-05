@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { Input } from "./input";
-import { Button } from "./button";
 import { ChevronLeft } from "lucide-react";
-import BeerComponent from "../beer";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export interface SessionHostFormAnswers {
     sessionPassword: string;
