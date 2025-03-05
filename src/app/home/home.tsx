@@ -1,19 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./home.css";
-import { Progress } from "../../components/ui/progress";
-import { Button } from "../../components/ui/button";
-import { Spinner } from "../../components/ui/spinner";
 import { generateQuestion } from "src/lib/utils";
+import { Spinner } from "../../components/loading/spinner";
+import { Button } from "../../components/ui/button";
+import { Progress } from "../../components/ui/progress";
+import "./home.css";
 
-import { SessionFormAnswers } from "../../components/ui/session-join";
 import { ChevronLeft } from "lucide-react";
 
+import { SessionFormAnswers } from "@/components/session/session-join";
+import RulesDrawer from "../../components/rules/rule-drawer";
 interface HomeProps {
     answers: SessionFormAnswers;
     onBack: () => void; // Add the back handler
+    onRuleSelection: () => void;
 }
 // Define the Home component
-const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
+const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null); // For the correct answer music
     const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
 
@@ -147,12 +149,13 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
                 className="absolute top-4 left-4"
                 onClick={onBack}
                 size="icon"
+                variant="secondary"
             >
                 <ChevronLeft />
             </Button>
 
             {/* <SessionForm></SessionForm> */}
-            <audio ref={loadingAudioRef} src="/audio/loadingmusic.mp3" />
+            <audio ref={loadingAudioRef} src="/audio/dontbea20.mp3" />
             <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
             <div className="">
                 {/* Trivia question display */}
@@ -179,6 +182,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
                                 {triviaAnswers.map((answer, index) => (
                                     <Button
                                         key={index}
+                                        variant="secondary"
                                         onClick={() =>
                                             handleAnswerClick(answer)
                                         }
@@ -219,11 +223,21 @@ const Home: React.FC<HomeProps> = ({ answers, onBack }) => {
 
                 <Button
                     onClick={handleGenerateQuestion}
-                    className="w-full"
+                    className="w-full "
                     disabled={!isAnswered}
+                    variant="secondary"
                 >
                     Begin Round!
                 </Button>
+                <Button
+                    onClick={onRuleSelection}
+                    className="w-full mt-4"
+                    disabled={!isAnswered}
+                    variant="secondary"
+                >
+                    Rule Selection Test
+                </Button>
+                <RulesDrawer></RulesDrawer>
             </div>
         </div>
     );

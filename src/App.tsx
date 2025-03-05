@@ -1,21 +1,24 @@
-import React, { useState } from "react";
+import { useRef, useState } from "react";
 import backgroundImage from "src/lib/test3.jpg";
 
 import "./App.css";
 import Home from "./app/home/home";
-import { SessionHostForm } from "./components/ui/session-host"; // Add import for host form
-import { SessionJoinForm } from "./components/ui/session-join"; // Add import for join form
-import { SessionChoice } from "./components/ui/session-choice";
-import { TrivailWaitingRoom } from "./components/ui/waitingroom"; // Add import for waiting room component
+
+import RuleSelection from "./components/rules/rule-selection";
+import { SessionChoice } from "./components/session/session-choice";
+import { SessionHostForm } from "./components/session/session-host";
+import { SessionJoinForm } from "./components/session/session-join";
+import { TrivailWaitingRoom } from "./components/session/waitingroom";
 
 function App() {
-    const [step, setStep] = useState<"choice" | "form" | "waiting" | "home">(
-        "choice"
-    );
+    const [step, setStep] = useState<
+        "choice" | "form" | "waiting" | "home" | "ruleSelection"
+    >("choice");
     const [formAnswers, setFormAnswers] = useState<any>(null);
     const [sessionType, setSessionType] = useState<"host" | "join" | null>(
         null
     ); // Track the session type (host or join)
+    const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
 
     // Define back handler function
     const handleBack = () => {
@@ -43,20 +46,27 @@ function App() {
         setStep("home");
     };
 
+    const handleRuleSelection = () => {
+        setStep("home");
+    };
+
+    const handleRuleSelectionEvent = () => {
+        setStep("ruleSelection");
+    };
     return (
         <div
             className="bg-cover bg-center min-h-screen"
             style={{ backgroundImage: `url(${backgroundImage}` }}
         >
+            <audio ref={loadingAudioRef} src="/audio/dontbea.mp3" />
+
             <div className="h-screen w-full flex items-center justify-center absolute z-[0]">
-                <div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[95%] flex-col relative card min-w-[25vw]">
-                    <h1 className="mx-auto text-4xl font-extrabold tracking-tight mb-8 ">
-                        <img
-                            src="./title.png"
-                            alt="Title Image"
-                            className="w-[250px] fade-all-bottom"
-                        />
-                    </h1>
+                <div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[90%] flex-col relative card min-w-[25vw]">
+                    <img
+                        src="./title.png"
+                        alt="Title Image"
+                        className="w-[250px] fade-all-bottom mx-auto"
+                    />
 
                     {step === "choice" && (
                         <SessionChoice
@@ -86,7 +96,17 @@ function App() {
                     )}
 
                     {step === "home" && (
-                        <Home answers={formAnswers} onBack={handleBack} />
+                        <Home
+                            answers={formAnswers}
+                            onBack={handleBack}
+                            onRuleSelection={handleRuleSelectionEvent}
+                        />
+                    )}
+
+                    {step === "ruleSelection" && (
+                        <RuleSelection
+                            onComplete={handleRuleSelection}
+                        ></RuleSelection>
                     )}
                 </div>
             </div>

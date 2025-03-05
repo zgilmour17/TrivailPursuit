@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Button } from "./button";
-import { ChevronLeft, X } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 
 interface WaitingRoomProps {
     onComplete: () => void;
@@ -36,6 +36,7 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
                 className="absolute top-4 left-4"
                 onClick={onBack}
                 size="icon"
+                variant="secondary"
             >
                 <ChevronLeft />
             </Button>
@@ -63,6 +64,7 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
                 className="mt-6 w-full"
                 disabled={players.length < 2}
                 onClick={onComplete}
+                variant="secondary"
             >
                 Start Game
             </Button>

@@ -1,29 +1,28 @@
-import React, { useState } from "react";
-import { Input } from "./input";
-import { Button } from "./button";
 import { ChevronLeft } from "lucide-react";
-import BeerComponent from "../beer";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
-export interface SessionFormAnswers {
-    sessionName: string;
+export interface SessionHostFormAnswers {
+    sessionPassword: string;
     givenName: string;
     topic: string;
 }
-interface SessionJoinFormProps {
-    onComplete: (answers: SessionFormAnswers) => void;
+interface SessionHostFormProps {
+    onComplete: (answers: SessionHostFormAnswers) => void;
     onBack: () => void; // Add the back handler
 }
 
-const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
+const SessionHostForm: React.FC<SessionHostFormProps> = ({
     onComplete,
     onBack,
 }) => {
-    const [sessionName, setSessionName] = useState("");
+    const [sessionPassword, setSessionPassword] = useState("");
     const [givenName, setGivenName] = useState("");
     const [topic, setTopic] = useState("");
 
     const handleJoin = () => {
-        onComplete({ sessionName, givenName, topic });
+        onComplete({ sessionPassword, givenName, topic });
         // Add your join logic here
     };
 
@@ -33,26 +32,29 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                 className="absolute top-4 left-4"
                 onClick={onBack}
                 size="icon"
+                variant="secondary"
             >
                 <ChevronLeft />
             </Button>
-            <h1 className="text-2xl font-bold mb-4 text-white text-center">
-                Join Session
+            <h1 className="text-2xl font-bold mb-4 text-white mx-auto w-full text-center">
+                Host Session
             </h1>
             <form onSubmit={handleJoin} className="space-y-4">
                 <div className="flex items-start space-x-4 max-md:flex-col">
                     {/* Input fields */}
-                    <div className="flex-1 space-y-4">
+                    <div className="flex-1 space-y-4 w-full">
                         <div>
                             <label className="block text-sm font-medium text-white">
-                                Session Name
+                                Session Password
                             </label>
                             <Input
                                 type="text"
-                                value={sessionName}
-                                onChange={(e) => setSessionName(e.target.value)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Enter session name"
+                                value={sessionPassword}
+                                onChange={(e) =>
+                                    setSessionPassword(e.target.value)
+                                }
+                                className="mt-1 block w-full"
+                                placeholder="Enter session password"
                                 required
                             />
                         </div>
@@ -65,7 +67,7 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                                 type="text"
                                 value={givenName}
                                 onChange={(e) => setGivenName(e.target.value)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                className="mt-1 block w-full"
                                 placeholder="Enter your name"
                                 required
                             />
@@ -79,8 +81,8 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                                 type="text"
                                 value={topic}
                                 onChange={(e) => setTopic(e.target.value)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Enter topic"
+                                className="mt-1 block w-full"
+                                placeholder="Enter your topic"
                                 required
                             />
                         </div>
@@ -89,11 +91,12 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                         <BeerComponent />
                     </div> */}
                 </div>
-                <Button type="submit" className="w-full">
-                    Join
+
+                <Button type="submit" className="w-full" variant="secondary">
+                    Host
                 </Button>
             </form>
         </div>
     );
 };
-export { SessionJoinForm };
+export { SessionHostForm };
