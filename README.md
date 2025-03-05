@@ -1,5 +1,9 @@
 # TrivailPursuit
-goated game
+This ain’t just any trivia game—this is THE trivia game. AI-powered, fresh questions, and banter so sharp it’ll cut you. You mess up? I’ll roast you proper. You win? Big up yourself.
+
+Download it now or get left behind like a wrong answer, bruv. 🎤🔥
+
+Trivia’s never been this hype. Don’t chat to me if you’re still playing anything else. 💯
 
 # .env Setup
 
