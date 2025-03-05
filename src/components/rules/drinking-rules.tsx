@@ -9,9 +9,13 @@ import {
 
 interface DrinkingRulesProps {
     onComplete: (index: number) => void;
+    drawerMode: boolean;
 }
 
-const DrinkingRules: React.FC<DrinkingRulesProps> = ({ onComplete }) => {
+const DrinkingRules: React.FC<DrinkingRulesProps> = ({
+    onComplete,
+    drawerMode,
+}) => {
     const rules = [
         {
             title: "Thumb Master",
@@ -45,7 +49,7 @@ const DrinkingRules: React.FC<DrinkingRulesProps> = ({ onComplete }) => {
             {rules.map((rule, index) => (
                 <HoverCard>
                     <HoverCardTrigger asChild>
-                        <DialogClose>
+                        {drawerMode ? (
                             <Button
                                 variant="link"
                                 className="text-white"
@@ -53,8 +57,19 @@ const DrinkingRules: React.FC<DrinkingRulesProps> = ({ onComplete }) => {
                             >
                                 {index + 1}. {rule.title}
                             </Button>
-                        </DialogClose>
+                        ) : (
+                            <DialogClose asChild>
+                                <Button
+                                    variant="link"
+                                    className="text-white"
+                                    onClick={() => onComplete(index)}
+                                >
+                                    {index + 1}. {rule.title}
+                                </Button>
+                            </DialogClose>
+                        )}
                     </HoverCardTrigger>
+
                     <HoverCardContent className="w-80 ">
                         <div className="flex flex-col">
                             <span className="italics underline">
