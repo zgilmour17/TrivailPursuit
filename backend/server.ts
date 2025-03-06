@@ -167,6 +167,34 @@ app.post("/generate-question", async (req, res) => {
     }
 });
 
+app.post("/generate-questions", async (req, res) => {
+    const { topics, amount } = req.body;
+    if (!topics) return res.status(400).json({ error: "Topic is required" });
+    console.log(topics, amount);
+    const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics}. 
+	For each question generated choose a single topic from that list.
+  Give 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each.
+  Respond in JSON list format:
+  {
+    "question": "<QUESTION>",
+    "choices": ["<ANSWER_1>", "<ANSWER_2>", "<ANSWER_3>", "<ANSWER_4>"],
+    "answer": "<CORRECT_ANSWER>"
+  }`;
+
+    try {
+        const question = await askAI(promptTemplate);
+        console.log(question);
+        const jsonString = question.match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
+        console.log(jsonString);
+        if (jsonString) {
+            res.json(JSON.parse(jsonString[0]));
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Failed to generate questions" });
+    }
+});
+
 app.post("/generate-rule", async (req, res) => {
     const { numRules } = req.body;
     if (!numRules)

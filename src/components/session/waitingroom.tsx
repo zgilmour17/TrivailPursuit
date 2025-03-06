@@ -6,16 +6,39 @@ interface WaitingRoomProps {
     onComplete: () => void;
     onBack: () => void; // Add the back handler
 }
+const getRandomColor = () => {
+    const randomHex = () => Math.floor(Math.random() * 256);
+    return `rgb(${randomHex()}, ${randomHex()}, ${randomHex()})`;
+};
 const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
     onComplete,
     onBack,
 }) => {
-    const handleStart = () => {
+    const handleStart = async () => {
         onComplete();
     };
     const [players, setPlayers] = useState<string[]>([]);
     const gamePin = "123456"; // Replace with dynamic PIN if needed
+    const [styles, setStyles] = useState<
+        Record<string, { rotation: number; color: string }>
+    >({});
 
+    useEffect(() => {
+        setStyles((prevStyles) => {
+            const newStyles = { ...prevStyles };
+
+            players.forEach((player) => {
+                if (!(player in newStyles)) {
+                    newStyles[player] = {
+                        rotation: Math.random() * 20 - 10,
+                        color: getRandomColor(),
+                    };
+                }
+            });
+
+            return newStyles;
+        });
+    }, [players]);
     // Simulate players joining
     useEffect(() => {
         const fakeNames = ["Alice", "Bob", "Charlie", "David", "Eve"];
@@ -48,16 +71,17 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
 
             <div className=" text-white w-full mt-2">
                 {/* <h2 className="text-2xl font-semibold mb-3">Players Joined</h2> */}
-                <div className="grid grid-cols-2 gap-2">
-                    {players.map((player, index) => (
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                    {players.map((player) => (
                         <div
-                            key={index}
-                            className="p-2 rounded-md text-center text-white neon-blue text-lg font-bold"
+                            key={player}
+                            className="name animate-fadein"
+                            style={{
+                                transform: `rotate(${styles[player]?.rotation}deg)`,
+                                textShadow: `0 0 0.05em #fff, 0 0 0.2em ${styles[player]?.color}, 0 0 0.3em ${styles[player]?.color}`,
+                            }}
                         >
-                            {player}{" "}
-                            {/* <button className="text-red-500 hover:text-red-700 my-auto">
-                                <X></X>
-                            </button> */}
+                            {player}
                         </div>
                     ))}
                 </div>

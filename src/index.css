@@ -1,7 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url("https://fonts.googleapis.com/css2?family=Mr+Dafoe&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Exo:wght@900&display=swap");
 @layer base {
     :root {
         --background: 0 0% 100%;
@@ -93,13 +94,13 @@
     z-index: -1;
     padding: 3px;
     border-radius: 10px;
-    animation: 3s spin linear infinite;
+    animation: 3s spinbg linear infinite;
 }
 .card::before {
     filter: blur(1.5rem);
     opacity: 1;
 }
-@keyframes spin {
+@keyframes spinbg {
     from {
         --angle: 0deg;
     }
@@ -279,4 +280,13 @@
         transform: scaleX(0);
         transform-origin: right;
     }
+}
+
+.name {
+    font-family: "Mr Dafoe";
+    margin: 0;
+    font-size: 2.5em;
+    margin-top: -0.6em;
+    color: white;
+    text-shadow: 0 0 0.05em #fff, 0 0 0.2em #4705fe, 0 0 0.3em #4705fe;
 }

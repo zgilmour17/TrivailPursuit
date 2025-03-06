@@ -21,7 +21,7 @@ const SessionHostForm: React.FC<SessionHostFormProps> = ({
     const [givenName, setGivenName] = useState("");
     const [topic, setTopic] = useState("");
 
-    const handleJoin = () => {
+    const handleHost = async () => {
         onComplete({ sessionPassword, givenName, topic });
         // Add your join logic here
     };
@@ -39,10 +39,10 @@ const SessionHostForm: React.FC<SessionHostFormProps> = ({
             <h1 className="text-2xl font-bold mb-4 text-white mx-auto w-full text-center">
                 Host Session
             </h1>
-            <form onSubmit={handleJoin} className="space-y-4">
+            <form onSubmit={handleHost} className="space-y-4">
                 <div className="flex items-start space-x-4 max-md:flex-col">
                     {/* Input fields */}
-                    <div className="flex-1 space-y-4 w-full">
+                    <div className="flex-1 space-y-4 w-full text-start">
                         <div>
                             <label className="block text-sm font-medium text-white">
                                 Session Password

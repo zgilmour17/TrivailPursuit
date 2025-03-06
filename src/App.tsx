@@ -4,15 +4,17 @@ import backgroundImage from "src/lib/test3.jpg";
 import "./App.css";
 import Home from "./app/home/home";
 
+import { Spinner } from "./components/loading/spinner";
 import RuleSelection from "./components/rules/rule-selection";
 import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
 import { SessionJoinForm } from "./components/session/session-join";
 import { TrivailWaitingRoom } from "./components/session/waitingroom";
+import { generateSessionQuestions } from "./lib/api-service";
 
 function App() {
     const [step, setStep] = useState<
-        "choice" | "form" | "waiting" | "home" | "ruleSelection"
+        "choice" | "form" | "waiting" | "home" | "ruleSelection" | "spinner"
     >("choice");
     const [formAnswers, setFormAnswers] = useState<any>(null);
     const [sessionType, setSessionType] = useState<"host" | "join" | null>(
@@ -42,7 +44,14 @@ function App() {
         setStep("form");
     };
 
-    const handleWaitingRoomComplete = () => {
+    const handleWaitingRoomComplete = async () => {
+        setStep("spinner");
+        var res = await generateSessionQuestions(
+            ["league of legends", "soccer", "cs2"],
+            15
+        );
+
+        console.log(res);
         setStep("home");
     };
 
@@ -108,6 +117,7 @@ function App() {
                             onComplete={handleRuleSelection}
                         ></RuleSelection>
                     )}
+                    {step === "spinner" && <Spinner></Spinner>}
                 </div>
             </div>
         </div>

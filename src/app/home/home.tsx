@@ -94,6 +94,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
                 startTimer();
             } else {
                 resolveRound();
+                setProgress(0);
                 setTriviaQuestion("Error loading question...");
                 return;
             }
