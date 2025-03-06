@@ -37,7 +37,10 @@ const RulesDrawer = () => {
                         </DrawerTitle>
                     </DrawerHeader>
 
-                    <DrinkingRules onComplete={handleOnComplete} />
+                    <DrinkingRules
+                        onComplete={handleOnComplete}
+                        drawerMode={true}
+                    />
 
                     <DrawerFooter>
                         <DrawerClose asChild>

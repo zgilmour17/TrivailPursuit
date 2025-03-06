@@ -81,7 +81,7 @@ const RuleCard = ({
 
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
-                    <DrinkingRules onComplete={onComplete} />
+                    <DrinkingRules onComplete={onComplete} drawerMode={false} />
                     <DialogFooter>
                         <DialogClose asChild>
                             <Button
