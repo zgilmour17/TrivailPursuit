@@ -21,68 +21,44 @@ const SessionHostForm: React.FC<SessionHostFormProps> = ({
 	const [givenName, setGivenName] = useState("");
 	const [topic, setTopic] = useState("");
 	// WebSocket
-	const [ws, setWs] = useState<WebSocket | null>(null);
-	const [hostName, setHostName] = useState("");
-	const [gameState, setGameState] = useState<any>(null);
-
-
-	useEffect(() => {
-		const WEBSOCKET_URL = "ws://localhost:4000"; // Change this if your backend runs on a different port
-		const socket = new WebSocket(WEBSOCKET_URL);
-
-		socket.onopen = () => {
-            console.log("WebSocket connected as host");
-            setWs(socket);
-        };
-	}
 
 	const handleHost = () => {
 		// Add your join logic here
-
-		if (ws) {
-			console.log("Sending host message");
-			ws.send(
-				JSON.stringify({
-					type: "host",
-					name: givenName,
-				})
-			);
-		}
 		onComplete({ sessionPassword, givenName, topic });
 	};
 
-    return (
-        <div>
-            <Button
-                className="absolute top-4 left-4"
-                onClick={onBack}
-                size="icon"
-                variant="secondary"
-            >
-                <ChevronLeft />
-            </Button>
-            <h1 className="text-2xl font-bold mb-4 text-white mx-auto w-full text-center">
-                Host Session
-            </h1>
-            <form onSubmit={handleHost} className="space-y-4">
-                <div className="flex items-start space-x-4 max-md:flex-col">
-                    {/* Input fields */}
-                    <div className="flex-1 space-y-4 w-full text-start">
-                        <div>
-                            <label className="block text-sm font-medium text-white">
-                                Session Password
-                            </label>
-                            <Input
-                                type="text"
-                                value={sessionPassword}
-                                onChange={(e) =>
-                                    setSessionPassword(e.target.value)
-                                }
-                                className="mt-1 block w-full"
-                                placeholder="Enter session password"
-                                required
-                            />
-                        </div>
+	return (
+		<div>
+			<Button
+				className="absolute top-4 left-4"
+				onClick={onBack}
+				size="icon"
+				variant="secondary"
+			>
+				<ChevronLeft />
+			</Button>
+			<h1 className="text-2xl font-bold mb-4 text-white mx-auto w-full text-center">
+				Host Session
+			</h1>
+			<form onSubmit={handleHost} className="space-y-4">
+				<div className="flex items-start space-x-4 max-md:flex-col">
+					{/* Input fields */}
+					<div className="flex-1 space-y-4 w-full text-start">
+						<div>
+							<label className="block text-sm font-medium text-white">
+								Session Password
+							</label>
+							<Input
+								type="text"
+								value={sessionPassword}
+								onChange={(e) =>
+									setSessionPassword(e.target.value)
+								}
+								className="mt-1 block w-full"
+								placeholder="Enter session password"
+								required
+							/>
+						</div>
 
 						<div>
 							<label className="block text-sm font-medium text-white">

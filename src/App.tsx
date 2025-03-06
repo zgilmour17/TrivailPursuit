@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import backgroundImage from "src/lib/test3.jpg";
 
 import "./App.css";
@@ -8,7 +8,10 @@ import { Spinner } from "./components/loading/spinner";
 import RuleSelection from "./components/rules/rule-selection";
 import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
-import { SessionJoinForm } from "./components/session/session-join";
+import {
+	SessionFormAnswers,
+	SessionJoinForm,
+} from "./components/session/session-join";
 import { TrivailWaitingRoom } from "./components/session/waitingroom";
 import { generateSessionQuestions } from "./lib/api-service";
 
@@ -21,6 +24,32 @@ function App() {
 		null
 	); // Track the session type (host or join)
 	const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
+	// WebSocket
+	const [ws, setWs] = useState<WebSocket | null>(null);
+	const [hostName, setHostName] = useState("");
+	const [gameState, setGameState] = useState<any>(null);
+	const [players, setPlayers] = useState<string[]>([]);
+
+	useEffect(() => {
+		const WEBSOCKET_URL = "ws://localhost:4000"; // Change this if your backend runs on a different port
+		const socket = new WebSocket(WEBSOCKET_URL);
+
+		socket.onopen = () => {
+			console.log("WebSocket connected");
+			setWs(socket);
+		};
+
+		socket.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			console.log("Received:", data);
+
+			if (data.type === "playerJoined") {
+				setGameState(data);
+				setPlayers((prev) => [...prev, data.player.name]);
+				console.log(players);
+			}
+		};
+	}, []);
 
 	// Define back handler function
 	const handleBack = () => {
@@ -34,8 +63,31 @@ function App() {
 		}
 	};
 
-	const handleFormComplete = (answers: any) => {
+	const handleFormCompleteHost = (answers: any) => {
 		setFormAnswers(answers);
+		if (ws) {
+			console.log("Sending host message");
+			ws.send(
+				JSON.stringify({
+					type: "host",
+					name: answers.givenName, // TODO: replace with host name
+				})
+			);
+		}
+		setStep("waiting"); // Transition to waiting room after form completion
+	};
+
+	const handleFormCompletePlayer = (answers: any) => {
+		setFormAnswers(answers);
+		if (ws) {
+			console.log("Sending player join message");
+			ws.send(
+				JSON.stringify({
+					type: "join",
+					name: answers.givenName, // TODO: replace with player name
+				})
+			);
+		}
 		setStep("waiting"); // Transition to waiting room after form completion
 	};
 
@@ -85,14 +137,14 @@ function App() {
 
 					{step === "form" && sessionType === "host" && (
 						<SessionHostForm
-							onComplete={handleFormComplete}
+							onComplete={handleFormCompleteHost}
 							onBack={handleBack}
 						/>
 					)}
 
 					{step === "form" && sessionType === "join" && (
 						<SessionJoinForm
-							onComplete={handleFormComplete}
+							onComplete={handleFormCompletePlayer}
 							onBack={handleBack}
 						/>
 					)}
@@ -101,6 +153,7 @@ function App() {
 						<TrivailWaitingRoom
 							onBack={handleBack}
 							onComplete={handleWaitingRoomComplete}
+							players={players}
 						/>
 					)}
 

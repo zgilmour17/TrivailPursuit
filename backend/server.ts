@@ -80,7 +80,7 @@ wss.on("connection", async (ws, req) => {
 		/connect\.sid=s%3A([^;]*)/
 	)?.[1]; // extract session ID
 	const session = await getSession(req);
-	session.game = session.game || { id: Date.now(), players: [], host: null }; // ensure session always exists
+	session.game = session.game || { id: Date.now(), players: [], host: null }; // ensure session always exists // TODO: replace with GUID
 
 	if (!sessionId) {
 		console.log("No session found, creating a new session."); // TODO: store sessions in database
@@ -120,9 +120,7 @@ wss.on("connection", async (ws, req) => {
 			console.log(
 				`Host "${hostPlayer.name}" started and joined the game!`
 			);
-			broadcast({ type: "hostStarted", host: hostPlayer });
-
-			ws.send(JSON.stringify({ type: "joined", player: hostPlayer }));
+			broadcast({ type: "playerJoined", player: hostPlayer });
 		}
 
 		// Handle player joining
@@ -131,7 +129,7 @@ wss.on("connection", async (ws, req) => {
 				data.name?.trim() || `Player${session.game.players.length + 1}`;
 
 			const player = {
-				id: Date.now(),
+				id: Date.now(), // TODO: replace with GUID
 				name: playerName,
 			};
 
@@ -142,8 +140,6 @@ wss.on("connection", async (ws, req) => {
 
 			console.log(`${player.name} joined the game!`);
 			broadcast({ type: "playerJoined", player });
-
-			ws.send(JSON.stringify({ type: "joined", player }));
 		}
 
 		// Handle player answering a question
@@ -276,10 +272,10 @@ app.post("/generate-question", async (req, res) => {
 });
 
 app.post("/generate-questions", async (req, res) => {
-    const { topics, amount } = req.body;
-    if (!topics) return res.status(400).json({ error: "Topic is required" });
-    console.log(topics, amount);
-    const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics}. 
+	const { topics, amount } = req.body;
+	if (!topics) return res.status(400).json({ error: "Topic is required" });
+	console.log(topics, amount);
+	const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics}. 
 	For each question generated choose a single topic from that list.
   Give 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each.
   Respond in JSON list format:
@@ -289,19 +285,19 @@ app.post("/generate-questions", async (req, res) => {
     "answer": "<CORRECT_ANSWER>"
   }. Do not include your thoughts, only include the json list.`;
 
-    try {
-        const question = await askAI(promptTemplate);
-        const jsonString = question
-            .replace("`", "")
-            .match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
-        console.log(jsonString);
-        if (jsonString) {
-            res.json(JSON.parse(jsonString));
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: "Failed to generate questions" });
-    }
+	try {
+		const question = await askAI(promptTemplate);
+		const jsonString = question
+			.replace("`", "")
+			.match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
+		console.log(jsonString);
+		if (jsonString) {
+			res.json(JSON.parse(jsonString));
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ error: "Failed to generate questions" });
+	}
 });
 
 app.post("/generate-rule", async (req, res) => {
