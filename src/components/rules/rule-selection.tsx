@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { CircleX } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import RuleCard from "./rule-card";
 import RulesDrawer from "./rule-drawer";
@@ -47,6 +48,11 @@ const RuleSelection = ({ onComplete }: { onComplete: () => void }) => {
         );
     };
 
+    const handleRuleSelect = (rule: string) => {
+        toast("Rule 3: blah blah has been replaced by a new rule.");
+        onComplete();
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-80 p-4">
             <span
@@ -66,14 +72,14 @@ const RuleSelection = ({ onComplete }: { onComplete: () => void }) => {
                         ruleIndex={ruleIndex}
                         onRefresh={() => changeRule(i)}
                         isRefreshing={refreshStates[i]}
-                        onComplete={onComplete}
+                        onComplete={() => handleRuleSelect("")}
                     />
                 ))}
             </div>
             <Button
                 className="mt-4 w-fit animate-fadein"
                 variant="secondary"
-                onClick={onComplete}
+                onClick={() => handleRuleSelect("")}
             >
                 Pass <CircleX />
             </Button>
