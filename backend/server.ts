@@ -49,7 +49,11 @@ const getSession = (
 	req: any
 ): Promise<
 	session.Session & {
-		game: { id: number; players: { id: number; name: string }[] };
+		game: {
+			id: number;
+			host: { id: number; name: string };
+			players: { id: number; name: string }[];
+		};
 	}
 > => {
 	return new Promise((resolve) => {
@@ -58,6 +62,7 @@ const getSession = (
 				req.session as session.Session & {
 					game: {
 						id: number;
+						host: { id: number; name: string };
 						players: { id: number; name: string }[];
 					};
 				}
@@ -74,24 +79,53 @@ wss.on("connection", async (ws, req) => {
 	const sessionId = cookies["connect.sid"];
 	const session = await getSession(req);
 
-	// Ensure a game session exists
 	if (!sessionId) {
 		ws.send(JSON.stringify({ type: "error", message: "No session found" }));
 		ws.close();
 		return;
 	}
 
-	session.game = session.game || { id: Date.now(), players: [] };
+	session.game = session.game || { id: Date.now(), players: [], host: null };
 
 	ws.on("message", (message) => {
 		const data = JSON.parse(message.toString());
 
-		// Handle player joining with a name
+		// Handle host creating a session (and also joining as a player)
+		if (data.type === "host") {
+			if (session.game.host) {
+				ws.send(
+					JSON.stringify({
+						type: "error",
+						message: "A host already exists",
+					})
+				);
+				return;
+			}
+
+			const hostPlayer = {
+				id: Date.now(),
+				name: data.name || "Host",
+			};
+
+			session.game.host = hostPlayer;
+			session.game.players.push(hostPlayer); // Add host to players array
+			session.save();
+
+			clients.set(ws, { session, player: hostPlayer, isHost: true });
+
+			console.log(
+				`Host "${hostPlayer.name}" started and joined the game!`
+			);
+			broadcast({ type: "hostStarted", host: hostPlayer });
+
+			ws.send(JSON.stringify({ type: "joined", player: hostPlayer }));
+		}
+
+		// Handle player joining
 		if (data.type === "join") {
 			const playerName =
 				data.name?.trim() || `Player${session.game.players.length + 1}`;
 
-			// Create player object
 			const player = {
 				id: Date.now(),
 				name: playerName,
@@ -105,10 +139,10 @@ wss.on("connection", async (ws, req) => {
 			console.log(`${player.name} joined the game!`);
 			broadcast({ type: "playerJoined", player });
 
-			// Send confirmation to the player
 			ws.send(JSON.stringify({ type: "joined", player }));
 		}
 
+		// Handle player answering a question
 		if (data.type === "answer") {
 			const client = clients.get(ws);
 			if (!client) return;
@@ -118,6 +152,59 @@ wss.on("connection", async (ws, req) => {
 				type: "answerReceived",
 				player: client.player.name,
 				answer: data.answer,
+			});
+		}
+
+		// Handle host kicking a player
+		if (data.type === "kick") {
+			const client = clients.get(ws);
+			if (!client || !client.isHost) {
+				ws.send(
+					JSON.stringify({
+						type: "error",
+						message: "Unauthorized action",
+					})
+				);
+				return;
+			}
+
+			const playerToKick = session.game.players.find(
+				(p) => p.name === data.name
+			);
+
+			if (!playerToKick) {
+				ws.send(
+					JSON.stringify({
+						type: "error",
+						message: "Player not found",
+					})
+				);
+				return;
+			}
+
+			// Remove player from session
+			session.game.players = session.game.players.filter(
+				(p) => p.id !== playerToKick.id
+			);
+			session.save();
+
+			// Find and disconnect the kicked player
+			for (const [clientWs, clientInfo] of clients.entries()) {
+				if (clientInfo.player.id === playerToKick.id) {
+					clientWs.send(JSON.stringify({ type: "kicked" }));
+					clientWs.close();
+					clients.delete(clientWs);
+					break;
+				}
+			}
+
+			console.log(
+				`${playerToKick.name} was kicked by ${client.player.name}`
+			);
+			broadcast({
+				type: "playerKicked",
+				player: playerToKick.name,
+				by: client.player.name,
 			});
 		}
 	});
