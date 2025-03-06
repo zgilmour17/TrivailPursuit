@@ -1,6 +1,6 @@
 import { parse } from "cookie";
 import cookieParser from "cookie-parser";
-import cors from "cors"; // <-- Add cors
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import session from "express-session";
@@ -76,28 +76,32 @@ const getSession = (
 // WebSocket connection handling
 wss.on("connection", async (ws, req) => {
 	const cookies = parse(req.headers.cookie || "");
-	const sessionId = cookies["connect.sid"];
+	const sessionId = req.headers.cookie?.match(
+		/connect\.sid=s%3A([^;]*)/
+	)?.[1]; // extract session ID
 	const session = await getSession(req);
+	session.game = session.game || { id: Date.now(), players: [], host: null }; // ensure session always exists
 
 	if (!sessionId) {
-		ws.send(JSON.stringify({ type: "error", message: "No session found" }));
-		ws.close();
-		return;
+		console.log("No session found, creating a new session."); // TODO: store sessions in database
 	}
-
-	session.game = session.game || { id: Date.now(), players: [], host: null };
 
 	ws.on("message", (message) => {
 		const data = JSON.parse(message.toString());
+		console.log("Message received");
 
 		// Handle host creating a session (and also joining as a player)
 		if (data.type === "host") {
+			console.log("Messaged type 'host' received");
 			if (session.game.host) {
 				ws.send(
 					JSON.stringify({
 						type: "error",
 						message: "A host already exists",
 					})
+				);
+				console.log(
+					`Host ${data.name} attempted to join as host but a host ${session.game.host.name} already exists`
 				);
 				return;
 			}
