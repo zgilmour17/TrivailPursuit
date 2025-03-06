@@ -179,15 +179,16 @@ app.post("/generate-questions", async (req, res) => {
     "question": "<QUESTION>",
     "choices": ["<ANSWER_1>", "<ANSWER_2>", "<ANSWER_3>", "<ANSWER_4>"],
     "answer": "<CORRECT_ANSWER>"
-  }`;
+  }. Do not include your thoughts, only include the json list.`;
 
     try {
         const question = await askAI(promptTemplate);
-        console.log(question);
-        const jsonString = question.match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
+        const jsonString = question
+            .replace("`", "")
+            .match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
         console.log(jsonString);
         if (jsonString) {
-            res.json(JSON.parse(jsonString[0]));
+            res.json(JSON.parse(jsonString));
         }
     } catch (error) {
         console.log(error);
