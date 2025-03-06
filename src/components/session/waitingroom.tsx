@@ -10,6 +10,9 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
     onComplete,
     onBack,
 }) => {
+    const handleStart = () => {
+        onComplete();
+    };
     const [players, setPlayers] = useState<string[]>([]);
     const gamePin = "123456"; // Replace with dynamic PIN if needed
 
@@ -63,7 +66,7 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
             <Button
                 className="mt-6 w-full"
                 disabled={players.length < 2}
-                onClick={onComplete}
+                onClick={handleStart}
                 variant="secondary"
             >
                 Start Game

@@ -22,8 +22,9 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
     const [topic, setTopic] = useState("");
 
     const handleJoin = () => {
-        onComplete({ sessionName, givenName, topic });
         // Add your join logic here
+
+        onComplete({ sessionName, givenName, topic });
     };
 
     return (
@@ -32,6 +33,7 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                 className="absolute top-4 left-4"
                 onClick={onBack}
                 size="icon"
+                variant="secondary"
             >
                 <ChevronLeft />
             </Button>
@@ -88,7 +90,7 @@ const SessionJoinForm: React.FC<SessionJoinFormProps> = ({
                         <BeerComponent />
                     </div> */}
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" variant="secondary">
                     Join
                 </Button>
             </form>

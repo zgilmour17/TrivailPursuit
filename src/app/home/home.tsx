@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { generateQuestion } from "src/lib/utils";
 import { Spinner } from "../../components/loading/spinner";
 import { Button } from "../../components/ui/button";
 import { Progress } from "../../components/ui/progress";
+import { generateQuestion } from "../../lib/api-service";
 import "./home.css";
 
 import { ChevronLeft } from "lucide-react";
@@ -82,10 +82,9 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
             const randomBadge =
                 badges[Math.floor(Math.random() * badges.length)];
             const response = await generateQuestion(randomBadge);
-            const jsonString = response.match(/{[\s\S]*}/);
 
-            if (jsonString) {
-                const randomQuestion = JSON.parse(jsonString[0]);
+            if (response) {
+                const randomQuestion = response;
                 // Set the selected question and its answers
                 setTriviaQuestion(randomQuestion.question);
                 setTriviaAnswers(randomQuestion.choices);
@@ -94,6 +93,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
                 setAnswerState(""); // Reset answer state
                 startTimer();
             } else {
+                resolveRound();
                 setTriviaQuestion("Error loading question...");
                 return;
             }
