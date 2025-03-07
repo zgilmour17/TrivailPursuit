@@ -1,132 +1,162 @@
 [
   {
-    "question": "Which League of Legends champion is known for their enchanting arrows?",
+    "question": "Which League of Legends champion is known as the 'Lady of Luminosity'?",
     "choices": [
-      "Ashe",
-      "Riven",
       "Lux",
-      "Jinx"
+      "Jinx",
+      "Ashe",
+      "Senna"
     ],
-    "answer": "Ashe"
+    "answer": "Lux"
   },
   {
-    "question": "Which ability does Thresh use to pull enemies?",
+    "question": "Which soccer player has won the most FIFA World Player of the Year awards?",
     "choices": [
-      "Flay",
-      "Hook",
-      "Lantern",
-      "Death Leap"
+      "Lionel Messi",
+      "Cristiano Ronaldo",
+      "Zinedine Zidane",
+      "Kaka"
     ],
-    "answer": "Hook"
+    "answer": "Lionel Messi"
   },
   {
-    "question": "Which map is Nunu's ultimate ability named after?",
+    "question": "What is the name of the new game mode introduced in CS2?",
     "choices": [
-      "Howling Abyss",
-      "Summoner's Rift",
-      "Twisted Treeline",
-      "Crystal Scar"
-    ],
-    "answer": "Howling Abyss"
-  },
-  {
-    "question": "How often is the FIFA World Cup held?",
-    "choices": [
-      "Every 2 years",
-      "Every 4 years",
-      "Every 3 years",
-      "Every 5 years"
-    ],
-    "answer": "Every 4 years"
-  },
-  {
-    "question": "How many Ballon d'Or awards has Lionel Messi won?",
-    "choices": [
-      "5",
-      "7",
-      "6",
-      "4"
-    ],
-    "answer": "7"
-  },
-  {
-    "question": "How many teams are in the English Premier League?",
-    "choices": [
-      "18",
-      "20",
-      "22",
-      "19"
-    ],
-    "answer": "20"
-  },
-  {
-    "question": "In what year was Counter-Strike 2 announced?",
-    "choices": [
-      "2021",
-      "2023",
-      "2022",
-      "2024"
-    ],
-    "answer": "2023"
-  },
-  {
-    "question": "Which Counter-Strike 2 map is set in a Middle Eastern city?",
-    "choices": [
-      "Mirage",
       "Dust II",
       "Inferno",
-      "Nuke"
+      "Danger Zone",
+      "Overpass"
     ],
-    "answer": "Mirage"
+    "answer": "Danger Zone"
   },
   {
-    "question": "What is the name of the default knife in Counter-Strike 2?",
+    "question": "Which League of Legends item provides ability power and mana?",
     "choices": [
-      "Karambit",
-      "Huntsman",
-      "Falchion",
-      "Classic Knife"
+      "Rabadon's Deathcap",
+      "Void Staff",
+      "Sorcery Shoes",
+      " Mejai's Soulstealer"
     ],
-    "answer": "Classic Knife"
+    "answer": "Rabadon's Deathcap"
   },
   {
-    "question": "When was Counter-Strike 2 initially released?",
+    "question": "Which soccer team has won the most UEFA Champions League titles?",
     "choices": [
-      "2021",
-      "2023",
-      "2024",
-      "2022"
+      "Real Madrid",
+      "AC Milan",
+      "Liverpool",
+      "Bayern Munich"
     ],
-    "answer": "2023"
+    "answer": "Real Madrid"
   },
   {
-    "question": "Which professional team won a CS2 Major in 2023?",
+    "question": "What is the maximum number of players allowed on a CS2 team?",
     "choices": [
-      "FaZe Clan",
-      "Cloud9",
-      "Astralis",
-      "G2 Esports"
+      "5",
+      "4",
+      "3",
+      "2"
     ],
-    "answer": "FaZe Clan"
+    "answer": "5"
   },
   {
-    "question": "Which weapon in Counter-Strike 2 is known for its one-shot headshot potential?",
+    "question": "Which League of Legends champion is a retro-futuristic robot?",
     "choices": [
-      "AK-47",
-      "M4A4",
-      "AWP",
-      "Desert Eagle"
+      "Orianna",
+      "Annie",
+      "Senna",
+      "Blitzcrank"
     ],
-    "answer": "AK-47"
+    "answer": "Blitzcrank"
   },
   {
-    "question": "How many players are on each team in standard Counter-Strike 2 matches?",
+    "question": "Who is the all-time leading scorer in the FIFA World Cup?",
     "choices": [
-      "4v4",
-      "5v5",
-      "3v3",
-      "6v6"
+      "Pelé",
+      "Miroslav Klose",
+      "Ronaldo",
+      "Lionel Messi"
     ],
-    "answer": "5v5"
+    "answer": "Miroslav Klose"
+  },
+  {
+    "question": "What is the name of the map introduced in CS2?",
+    "choices": [
+      "Inferno",
+      "Dust II",
+      "Overpass",
+      "Vertigo"
+    ],
+    "answer": "Overpass"
+  },
+  {
+    "question": "Which League of Legends champion is known for their ultimate ability 'Hall of Mirrors'?",
+    "choices": [
+      "LeBlanc",
+      "Anivia",
+      "Lux",
+      "Syndra"
+    ],
+    "answer": "LeBlanc"
+  },
+  {
+    "question": "Which soccer player is known as 'The Flea'?",
+    "choices": [
+      "Lionel Messi",
+      "Cristiano Ronaldo",
+      "Sergio Agüero",
+      "Andrés Iniesta"
+    ],
+    "answer": "Lionel Messi"
+  },
+  {
+    "question": "What is the name of the new/packages system in CS2?",
+    "choices": [
+      "Intel",
+      "Operations",
+      "Cases",
+      "Skins"
+    ],
+    "answer": "Operations"
+  },
+  {
+    "question": "Which League of Legends champion uses a fishing rod as a weapon?",
+    "choices": [
+      "Fizz",
+      "Nautilus",
+      " Blitzcrank",
+      "Thresh"
+    ],
+    "answer": "Blitzcrank"
+  },
+  {
+    "question": "Which soccer team is based in Camp Nou?",
+    "choices": [
+      "Real Madrid",
+      "FC Barcelona",
+      "Atletico Madrid",
+      "Valencia CF"
+    ],
+    "answer": "FC Barcelona"
+  },
+  {
+    "question": "What is the name of the CS2 update that added a new anti-cheat system?",
+    "choices": [
+      "VAC",
+      "Prime",
+      "Trust Factor",
+      " Source 2"
+    ],
+    "answer": "VAC"
+  },
+  {
+    "question": "Which League of Legends champion is known as the 'Masked Marauder'?",
+    "choices": [
+      "Senna",
+      "Viktor",
+      "Twisted Fate",
+      "Shaco"
+    ],
+    "answer": "Twisted Fate"
   }
 ]

@@ -290,3 +290,26 @@
     color: white;
     text-shadow: 0 0 0.05em #fff, 0 0 0.2em #4705fe, 0 0 0.3em #4705fe;
 }
+.text-neon-yellow {
+    color: #ffea00;
+}
+
+.text-neon-pink {
+    color: #ff00ff;
+}
+
+.text-neon-blue {
+    color: #00ffff;
+}
+
+.text-neon-green {
+    color: #00ff00;
+}
+
+.border-neon-pink {
+    border-color: #ff00ff;
+}
+
+.border-neon-blue {
+    border-color: #00ffff;
+}

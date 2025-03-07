@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import backgroundImage from "src/lib/test3.jpg";
 
 import "./App.css";
-import Home from "./app/home/home";
 
-import { Spinner } from "./components/loading/spinner";
+import Home from "./app/home/home";
+import { GenerateGame } from "./components/loading/generate-game";
 import RuleSelection from "./components/rules/rule-selection";
 import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
@@ -14,7 +14,12 @@ import { generateRules, generateSessionQuestions } from "./lib/api-service";
 
 function App() {
     const [step, setStep] = useState<
-        "choice" | "form" | "waiting" | "home" | "ruleSelection" | "spinner"
+        | "choice"
+        | "form"
+        | "waiting"
+        | "home"
+        | "ruleSelection"
+        | "GenerateGame"
     >("choice");
     const [formAnswers, setFormAnswers] = useState<any>(null);
     const [sessionType, setSessionType] = useState<"host" | "join" | null>(
@@ -106,7 +111,7 @@ function App() {
     };
 
     const handleWaitingRoomComplete = async () => {
-        setStep("spinner");
+        setStep("GenerateGame");
         try {
             // Generate trivia questions
             const res = await generateSessionQuestions(
@@ -170,27 +175,23 @@ function App() {
                         alt="Title Image"
                         className="w-[250px] fade-all-bottom mx-auto"
                     />
-
                     {step === "choice" && (
                         <SessionChoice
                             onSelect={handleSessionTypeSelect} // Pass handler to handle session type selection
                         />
                     )}
-
                     {step === "form" && sessionType === "host" && (
                         <SessionHostForm
                             onComplete={handleFormCompleteHost}
                             onBack={handleBack}
                         />
                     )}
-
                     {step === "form" && sessionType === "join" && (
                         <SessionJoinForm
                             onComplete={handleFormCompletePlayer}
                             onBack={handleBack}
                         />
                     )}
-
                     {step === "waiting" && (
                         <TrivailWaitingRoom
                             host={host}
@@ -199,22 +200,27 @@ function App() {
                             players={players}
                         />
                     )}
-
                     {step === "home" && (
-                        <Home
-                            host={host}
-                            answers={formAnswers}
-                            onBack={handleBack}
-                            onRuleSelection={handleRuleSelectionEvent}
-                        />
+                        <>
+                            <Home
+                                host={host}
+                                answers={formAnswers}
+                                onBack={handleBack}
+                                onRuleSelection={handleRuleSelectionEvent}
+                            />
+                        </>
                     )}
-
                     {step === "ruleSelection" && (
                         <RuleSelection
                             onComplete={handleRuleSelection}
                         ></RuleSelection>
                     )}
-                    {step === "spinner" && <Spinner></Spinner>}
+                    {step === "GenerateGame" && <GenerateGame></GenerateGame>}
+
+                    {/* //? waiting for rule component
+					//  <WaitingForAction></WaitingForAction> 
+					//? leaderboard component
+					//  <TriviaLeaderboard></TriviaLeaderboard>*/}
                 </div>
             </div>
         </div>

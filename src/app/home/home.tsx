@@ -36,7 +36,8 @@ const Home: React.FC<HomeProps> = ({
     const [bouncingAnswer, setBouncingAnswer] = useState<string | null>(null); // State to track the bouncing answer
     const [loading, setLoading] = useState<boolean>(false); // Loading state for the spinner
     const [isAnswered, setIsAnswered] = useState(true); // Track if an answer has been selected
-    const [progress, setProgress] = React.useState(13);
+    const [progress, setProgress] = useState(0);
+    const [questionNumber, setQuestionNumber] = useState(0);
 
     const startTimer = () => {
         setProgress(100);

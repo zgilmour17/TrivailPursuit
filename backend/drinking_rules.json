@@ -1,82 +1,82 @@
 [
   {
-    "title": "Wrong Answer",
-    "description": "If you answer incorrectly, take a sip of your drink."
+    "title": "Wrong Answer Penalty",
+    "description": "Take a sip for each wrong answer in the round."
   },
   {
-    "title": "All Wrong",
-    "description": "If everyone answers incorrectly, everyone takes a sip."
+    "title": "Multiple Sips",
+    "description": "Take two sips for each wrong answer."
   },
   {
-    "title": "Right Answer",
-    "description": "If you answer correctly, everyone else takes a sip."
-  },
-  {
-    "title": "Slow Start",
-    "description": "The player who answers last takes a sip."
-  },
-  {
-    "title": "Quick Draw",
-    "description": "The first player to answer correctly chooses someone to take a sip."
+    "title": "Everyone Wrong",
+    "description": "If everyone gets it wrong, everyone takes a shot."
   },
   {
     "title": "All Correct",
-    "description": "If everyone answers correctly, everyone takes a sip."
+    "description": "If everyone gets it right, everyone takes a sip."
   },
   {
-    "title": "Majority Rules",
-    "description": "If the majority answers incorrectly, they take a sip; the minority also takes a sip."
+    "title": "Right Answer Only",
+    "description": "Only those who got it right take a sip."
   },
   {
-    "title": "Streaker",
-    "description": "If a player gets three correct answers in a row, they take a sip."
+    "title": "Right Streak",
+    "description": "If you get two right answers in a row, take a shot."
   },
   {
-    "title": "Lucky Number",
-    "description": "If the correct answer corresponds to your assigned number, take a sip."
+    "title": "Someone's Wrong",
+    "description": "If someone gets it wrong, everyone else assigns them a sip."
   },
   {
-    "title": "Double Down",
-    "description": "If you answer incorrectly twice in a row, take two sips."
+    "title": "Assign Sips",
+    "description": "If you get it wrong, you assign sips to others."
   },
   {
-    "title": "Consolation Sip",
-    "description": "If you answer incorrectly three times in a row, take three sips."
+    "title": "High-Five Last",
+    "description": "Everyone high-fives, and the last person to do so takes a sip."
   },
   {
-    "title": "Random Victim",
-    "description": "At the end of the round, a player is randomly selected to take a shot."
+    "title": "Fastest Wrong",
+    "description": "The person who answered wrong the fastest takes a sip."
   },
   {
-    "title": "Speed Demon",
-    "description": "The fastest player to answer correctly makes another player take a sip."
+    "title": "Speed Penalty",
+    "description": "The slowest to answer takes a sip."
   },
   {
-    "title": "Time's Up",
-    "description": "If you don't answer in time, take a sip."
+    "title": "Host's Choice",
+    "description": "The host chooses who takes a sip."
   },
   {
-    "title": "Unanimous",
-    "description": "If everyone answers correctly, the host chooses someone to take a sip."
+    "title": "Fast Right",
+    "description": "The fastest correct answer makes everyone else take a sip."
   },
   {
-    "title": "Odd One Out",
-    "description": "The player with the different answer is voted by the majority and takes a sip."
+    "title": "Double Penalty",
+    "description": "Double the sips for the next wrong answer."
   },
   {
-    "title": "Team Turn",
-    "description": "If half or more answer incorrectly, everyone takes a sip."
+    "title": "Wrong Streak",
+    "description": "If you get three wrong answers in a row, take a shot."
   },
   {
-    "title": "Early Bird",
-    "description": "The first to answer, if wrong, takes a sip."
+    "title": "Category Challenge",
+    "description": "If a category is announced, everyone answering wrong in that category takes a sip."
   },
   {
-    "title": "False Confidence",
-    "description": "If you answer confidently but incorrectly, take a shot."
+    "title": "Speed to Shot",
+    "description": "The slowest to answer takes a shot."
   },
   {
-    "title": "Perfect Round",
-    "description": "If everyone answers correctly, all toast and take a sip."
+    "title": "Wrong Assign",
+    "description": "Guess who got it wrong; if wrong, take a sip."
+  },
+  {
+    "title": "Host Rule",
+    "description": "The host creates a new rule for the round."
+  },
+  {
+    "title": "Explanation Punishment",
+    "description": "If you get it wrong, explain the correct answer and take a sip."
   }
 ]
