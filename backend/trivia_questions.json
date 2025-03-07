@@ -1,0 +1,132 @@
+[
+  {
+    "question": "Which League of Legends champion is known for their enchanting arrows?",
+    "choices": [
+      "Ashe",
+      "Riven",
+      "Lux",
+      "Jinx"
+    ],
+    "answer": "Ashe"
+  },
+  {
+    "question": "Which ability does Thresh use to pull enemies?",
+    "choices": [
+      "Flay",
+      "Hook",
+      "Lantern",
+      "Death Leap"
+    ],
+    "answer": "Hook"
+  },
+  {
+    "question": "Which map is Nunu's ultimate ability named after?",
+    "choices": [
+      "Howling Abyss",
+      "Summoner's Rift",
+      "Twisted Treeline",
+      "Crystal Scar"
+    ],
+    "answer": "Howling Abyss"
+  },
+  {
+    "question": "How often is the FIFA World Cup held?",
+    "choices": [
+      "Every 2 years",
+      "Every 4 years",
+      "Every 3 years",
+      "Every 5 years"
+    ],
+    "answer": "Every 4 years"
+  },
+  {
+    "question": "How many Ballon d'Or awards has Lionel Messi won?",
+    "choices": [
+      "5",
+      "7",
+      "6",
+      "4"
+    ],
+    "answer": "7"
+  },
+  {
+    "question": "How many teams are in the English Premier League?",
+    "choices": [
+      "18",
+      "20",
+      "22",
+      "19"
+    ],
+    "answer": "20"
+  },
+  {
+    "question": "In what year was Counter-Strike 2 announced?",
+    "choices": [
+      "2021",
+      "2023",
+      "2022",
+      "2024"
+    ],
+    "answer": "2023"
+  },
+  {
+    "question": "Which Counter-Strike 2 map is set in a Middle Eastern city?",
+    "choices": [
+      "Mirage",
+      "Dust II",
+      "Inferno",
+      "Nuke"
+    ],
+    "answer": "Mirage"
+  },
+  {
+    "question": "What is the name of the default knife in Counter-Strike 2?",
+    "choices": [
+      "Karambit",
+      "Huntsman",
+      "Falchion",
+      "Classic Knife"
+    ],
+    "answer": "Classic Knife"
+  },
+  {
+    "question": "When was Counter-Strike 2 initially released?",
+    "choices": [
+      "2021",
+      "2023",
+      "2024",
+      "2022"
+    ],
+    "answer": "2023"
+  },
+  {
+    "question": "Which professional team won a CS2 Major in 2023?",
+    "choices": [
+      "FaZe Clan",
+      "Cloud9",
+      "Astralis",
+      "G2 Esports"
+    ],
+    "answer": "FaZe Clan"
+  },
+  {
+    "question": "Which weapon in Counter-Strike 2 is known for its one-shot headshot potential?",
+    "choices": [
+      "AK-47",
+      "M4A4",
+      "AWP",
+      "Desert Eagle"
+    ],
+    "answer": "AK-47"
+  },
+  {
+    "question": "How many players are on each team in standard Counter-Strike 2 matches?",
+    "choices": [
+      "4v4",
+      "5v5",
+      "3v3",
+      "6v6"
+    ],
+    "answer": "5v5"
+  }
+]

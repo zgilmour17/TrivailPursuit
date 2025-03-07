@@ -8,173 +8,217 @@ import { Spinner } from "./components/loading/spinner";
 import RuleSelection from "./components/rules/rule-selection";
 import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
-import {
-	SessionFormAnswers,
-	SessionJoinForm,
-} from "./components/session/session-join";
+import { SessionJoinForm } from "./components/session/session-join";
 import { TrivailWaitingRoom } from "./components/session/waitingroom";
-import { generateSessionQuestions } from "./lib/api-service";
+import { generateRules, generateSessionQuestions } from "./lib/api-service";
 
 function App() {
-	const [step, setStep] = useState<
-		"choice" | "form" | "waiting" | "home" | "ruleSelection" | "spinner"
-	>("choice");
-	const [formAnswers, setFormAnswers] = useState<any>(null);
-	const [sessionType, setSessionType] = useState<"host" | "join" | null>(
-		null
-	); // Track the session type (host or join)
-	const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
-	// WebSocket
-	const [ws, setWs] = useState<WebSocket | null>(null);
-	const [hostName, setHostName] = useState("");
-	const [gameState, setGameState] = useState<any>(null);
-	const [players, setPlayers] = useState<string[]>([]);
+    const [step, setStep] = useState<
+        "choice" | "form" | "waiting" | "home" | "ruleSelection" | "spinner"
+    >("choice");
+    const [formAnswers, setFormAnswers] = useState<any>(null);
+    const [sessionType, setSessionType] = useState<"host" | "join" | null>(
+        null
+    ); // Track the session type (host or join)
+    const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
+    // WebSocket
+    const [ws, setWs] = useState<WebSocket | null>(null);
+    const [hostName, setHostName] = useState("");
+    const [gameState, setGameState] = useState<any>(null);
+    const [players, setPlayers] = useState<string[]>([]);
+    const [host, setHost] = useState<boolean>(false);
 
-	useEffect(() => {
-		const WEBSOCKET_URL = "ws://localhost:4000"; // Change this if your backend runs on a different port
-		const socket = new WebSocket(WEBSOCKET_URL);
+    const hasRun = useRef(false); // Declare outside useEffect
 
-		socket.onopen = () => {
-			console.log("WebSocket connected");
-			setWs(socket);
-		};
+    useEffect(() => {
+        if (hasRun.current) return; // Prevent running again in strict mode
+        hasRun.current = true; // Mark effect as executed
 
-		socket.onmessage = (event) => {
-			const data = JSON.parse(event.data);
-			console.log("Received:", data);
+        console.log("yo triggered!!XD");
+        const WEBSOCKET_URL = "ws://localhost:4000";
+        const socket = new WebSocket(WEBSOCKET_URL);
 
-			if (data.type === "playerJoined") {
-				setGameState(data);
-				setPlayers((prev) => [...prev, data.player.name]);
-				console.log(players);
-			}
-		};
-	}, []);
+        socket.onopen = () => {
+            console.log("WebSocket connected");
+            setWs(socket);
+        };
 
-	// Define back handler function
-	const handleBack = () => {
-		if (step === "form") {
-			setStep("choice");
-			setSessionType(null); // Reset session type when going back to choice
-		} else if (step === "waiting") {
-			setStep("form");
-		} else if (step === "home") {
-			setStep("form");
-		}
-	};
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("Received:", data);
 
-	const handleFormCompleteHost = (answers: any) => {
-		setFormAnswers(answers);
-		if (ws) {
-			console.log("Sending host message");
-			ws.send(
-				JSON.stringify({
-					type: "host",
-					name: answers.givenName, // TODO: replace with host name
-				})
-			);
-		}
-		setStep("waiting"); // Transition to waiting room after form completion
-	};
+            if (data.type === "playerJoined") {
+                setPlayers((prev) => [...prev, data.player.name]);
+                console.log(players);
+            }
+            if (data.type === "startGame") {
+                setStep("home");
+            }
+        };
+    }, []);
 
-	const handleFormCompletePlayer = (answers: any) => {
-		setFormAnswers(answers);
-		if (ws) {
-			console.log("Sending player join message");
-			ws.send(
-				JSON.stringify({
-					type: "join",
-					name: answers.givenName, // TODO: replace with player name
-				})
-			);
-		}
-		setStep("waiting"); // Transition to waiting room after form completion
-	};
+    // Define back handler function
+    const handleBack = () => {
+        if (step === "form") {
+            setStep("choice");
+            setSessionType(null); // Reset session type when going back to choice
+        } else if (step === "waiting") {
+            setStep("form");
+        } else if (step === "home") {
+            setStep("form");
+        }
+    };
 
-	const handleSessionTypeSelect = (type: "host" | "join") => {
-		setSessionType(type);
-		setStep("form");
-	};
+    const handleFormCompleteHost = (answers: any) => {
+        setFormAnswers(answers);
+        setHost(true);
+        if (ws) {
+            console.log("Sending host message");
+            ws.send(
+                JSON.stringify({
+                    type: "host",
+                    name: answers.givenName, // TODO: replace with host name
+                })
+            );
+        }
+        setStep("waiting"); // Transition to waiting room after form completion
+    };
 
-	const handleWaitingRoomComplete = async () => {
-		setStep("spinner");
-		var res = await generateSessionQuestions(
-			["league of legends", "soccer", "cs2"],
-			15
-		);
+    const handleFormCompletePlayer = (answers: any) => {
+        setFormAnswers(answers);
+        setHost(false);
 
-		console.log(res);
-		setStep("home");
-	};
+        if (ws) {
+            console.log("Sending player join message");
+            ws.send(
+                JSON.stringify({
+                    type: "join",
+                    name: answers.givenName, // TODO: replace with player name
+                })
+            );
+        }
+        setStep("waiting"); // Transition to waiting room after form completion
+    };
 
-	const handleRuleSelection = () => {
-		setStep("home");
-	};
+    const handleSessionTypeSelect = (type: "host" | "join") => {
+        setSessionType(type);
+        setStep("form");
+    };
 
-	const handleRuleSelectionEvent = () => {
-		setStep("ruleSelection");
-	};
-	return (
-		<div
-			className="bg-cover bg-center min-h-screen"
-			style={{ backgroundImage: `url(${backgroundImage}` }}
-		>
-			<audio ref={loadingAudioRef} src="/audio/dontbea.mp3" />
+    const handleWaitingRoomComplete = async () => {
+        setStep("spinner");
+        try {
+            // Generate trivia questions
+            const res = await generateSessionQuestions(
+                ["league of legends", "soccer", "cs2"],
+                15
+            );
+            const rulesres = await generateRules(20);
+            //! Send trivia questions to save to jsonfile in backend
+            await fetch("http://localhost:4000/write-trivia-questions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ questions: res }),
+            });
 
-			<div className="h-screen w-full flex items-center justify-center absolute z-[0]">
-				<div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[90%] flex-col relative card min-w-[25vw]">
-					<img
-						src="./title.png"
-						alt="Title Image"
-						className="w-[250px] fade-all-bottom mx-auto"
-					/>
+            //! Send rules to save to jsonfile in backend
+            await fetch("http://localhost:4000/write-rules", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ rules: rulesres }),
+            });
 
-					{step === "choice" && (
-						<SessionChoice
-							onSelect={handleSessionTypeSelect} // Pass handler to handle session type selection
-						/>
-					)}
+            console.log(
+                "Trivia questions written to lib/trivia_questions.json"
+            );
+            if (ws) {
+                console.log("Starting game");
+                ws.send(
+                    JSON.stringify({
+                        type: "startGame",
+                    })
+                );
+            }
+            setStep("home");
+        } catch (err) {
+            console.error("Error generating or writing trivia questions:", err);
+        }
+    };
 
-					{step === "form" && sessionType === "host" && (
-						<SessionHostForm
-							onComplete={handleFormCompleteHost}
-							onBack={handleBack}
-						/>
-					)}
+    const handleRuleSelection = () => {
+        setStep("home");
+    };
 
-					{step === "form" && sessionType === "join" && (
-						<SessionJoinForm
-							onComplete={handleFormCompletePlayer}
-							onBack={handleBack}
-						/>
-					)}
+    const handleRuleSelectionEvent = () => {
+        setStep("ruleSelection");
+    };
+    return (
+        <div
+            className="bg-cover bg-center min-h-screen"
+            style={{ backgroundImage: `url(${backgroundImage}` }}
+        >
+            <audio ref={loadingAudioRef} src="/audio/dontbea.mp3" />
 
-					{step === "waiting" && (
-						<TrivailWaitingRoom
-							onBack={handleBack}
-							onComplete={handleWaitingRoomComplete}
-							players={players}
-						/>
-					)}
+            <div className="h-screen w-full flex items-center justify-center absolute z-[0]">
+                <div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[90%] flex-col relative card min-w-[25vw]">
+                    <img
+                        src="./title.png"
+                        alt="Title Image"
+                        className="w-[250px] fade-all-bottom mx-auto"
+                    />
 
-					{step === "home" && (
-						<Home
-							answers={formAnswers}
-							onBack={handleBack}
-							onRuleSelection={handleRuleSelectionEvent}
-						/>
-					)}
+                    {step === "choice" && (
+                        <SessionChoice
+                            onSelect={handleSessionTypeSelect} // Pass handler to handle session type selection
+                        />
+                    )}
 
-					{step === "ruleSelection" && (
-						<RuleSelection
-							onComplete={handleRuleSelection}
-						></RuleSelection>
-					)}
-					{step === "spinner" && <Spinner></Spinner>}
-				</div>
-			</div>
-		</div>
-	);
+                    {step === "form" && sessionType === "host" && (
+                        <SessionHostForm
+                            onComplete={handleFormCompleteHost}
+                            onBack={handleBack}
+                        />
+                    )}
+
+                    {step === "form" && sessionType === "join" && (
+                        <SessionJoinForm
+                            onComplete={handleFormCompletePlayer}
+                            onBack={handleBack}
+                        />
+                    )}
+
+                    {step === "waiting" && (
+                        <TrivailWaitingRoom
+                            host={host}
+                            onBack={handleBack}
+                            onComplete={handleWaitingRoomComplete}
+                            players={players}
+                        />
+                    )}
+
+                    {step === "home" && (
+                        <Home
+                            host={host}
+                            answers={formAnswers}
+                            onBack={handleBack}
+                            onRuleSelection={handleRuleSelectionEvent}
+                        />
+                    )}
+
+                    {step === "ruleSelection" && (
+                        <RuleSelection
+                            onComplete={handleRuleSelection}
+                        ></RuleSelection>
+                    )}
+                    {step === "spinner" && <Spinner></Spinner>}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default App;

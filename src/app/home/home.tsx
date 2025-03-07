@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Spinner } from "../../components/loading/spinner";
 import { Button } from "../../components/ui/button";
 import { Progress } from "../../components/ui/progress";
-import { generateQuestion } from "../../lib/api-service";
 import "./home.css";
 
 import { ChevronLeft } from "lucide-react";
@@ -13,9 +11,15 @@ interface HomeProps {
     answers: SessionFormAnswers;
     onBack: () => void; // Add the back handler
     onRuleSelection: () => void;
+    host: boolean;
 }
 // Define the Home component
-const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
+const Home: React.FC<HomeProps> = ({
+    answers,
+    onBack,
+    onRuleSelection,
+    host,
+}) => {
     const audioRef = useRef<HTMLAudioElement | null>(null); // For the correct answer music
     const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
 
@@ -69,19 +73,21 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
 
     // Handle generating a trivia question
     const handleGenerateQuestion = async () => {
-        //setRemark(null);
         setShowQuestion(true); // Show the trivia question
         setLoading(true); // Set loading to true to show spinner
         setBouncingAnswer(null);
-        audioRef.current?.pause();
-        loadingAudioRef.current?.play(); // Play loading music
+        // audioRef.current?.pause();
+        //loadingAudioRef.current?.play(); // Play loading music
         setIsAnswered(false); // Reset answer state
 
         try {
-            // Pick a random question from the list
-            const randomBadge =
-                badges[Math.floor(Math.random() * badges.length)];
-            const response = await generateQuestion(randomBadge);
+            //TODO Pick random question from list
+            const response = {
+                question:
+                    "Which company developed the popular game League of Legends?",
+                choices: ["Riot Games", "Valve", "Blizzard", "Epic Games"],
+                answer: "Riot Games",
+            };
 
             if (response) {
                 const randomQuestion = response;
@@ -160,9 +166,9 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
             <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
             <div className="">
                 {/* Trivia question display */}
-                {showQuestion && loading ? (
-                    <div className="flex justify-center items-center h-[360px] mb-8">
-                        <Spinner /> {/* Show the Spinner while loading */}
+                {!host && !triviaQuestion ? (
+                    <div className="flex justify-center items-center mb-8">
+                        Waiting for host to begin round...
                     </div>
                 ) : (
                     triviaQuestion && (
@@ -221,23 +227,27 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, onRuleSelection }) => {
                         </div>
                     )
                 )}
+                {host && (
+                    <div>
+                        <Button
+                            onClick={handleGenerateQuestion}
+                            className="w-full "
+                            disabled={!isAnswered}
+                            variant="secondary"
+                        >
+                            Begin Round!
+                        </Button>
+                        <Button
+                            onClick={onRuleSelection}
+                            className="w-full mt-4"
+                            disabled={!isAnswered}
+                            variant="secondary"
+                        >
+                            Rule Selection Test
+                        </Button>
+                    </div>
+                )}
 
-                <Button
-                    onClick={handleGenerateQuestion}
-                    className="w-full "
-                    disabled={!isAnswered}
-                    variant="secondary"
-                >
-                    Begin Round!
-                </Button>
-                <Button
-                    onClick={onRuleSelection}
-                    className="w-full mt-4"
-                    disabled={!isAnswered}
-                    variant="secondary"
-                >
-                    Rule Selection Test
-                </Button>
                 <RulesDrawer></RulesDrawer>
             </div>
         </div>

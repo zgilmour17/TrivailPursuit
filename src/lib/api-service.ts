@@ -50,3 +50,26 @@ export const generateSessionQuestions = async (
         return null;
     }
 };
+export const generateRules = async (amount: number) => {
+    try {
+        console.log(`${APIURL}/generate-rules`);
+        const response = await fetch(`${APIURL}/generate-rules`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ amount }),
+        });
+        console.log(response);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("Failed to fetch rules:", error);
+        return null;
+    }
+};
