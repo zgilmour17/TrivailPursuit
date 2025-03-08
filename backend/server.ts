@@ -1,4 +1,3 @@
-import { parse } from "cookie";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -6,7 +5,11 @@ import express from "express";
 import session from "express-session";
 import fs from "fs";
 import http from "http";
+import { v4 as uuidv4 } from "uuid";
 import { WebSocketServer } from "ws";
+import { Game } from "./classes/game";
+import { Player } from "./classes/player";
+import triviaQuestions from "./trivia_questions.json"; // Adjust the path as needed
 
 // setup .env
 dotenv.config();
@@ -43,50 +46,22 @@ const server = http.createServer(app); // Create HTTP server for WebSocket
 // Create WebSocket server and integrate with Express sessions
 const wss = new WebSocketServer({ server });
 
-const clients = new Map(); // Track connected players
+// Store game state in memory
+const games: Record<string, Game> = {};
 
-// Function to use Express sessions inside WebSockets
-const getSession = (
-    req: any
-): Promise<
-    session.Session & {
-        game: {
-            id: number;
-            host: { id: number; name: string };
-            players: { id: number; name: string }[];
-        };
+const clients = new Map<
+    WebSocket,
+    {
+        gameId: string;
+        playerId: string;
+        isHost: boolean;
     }
-> => {
-    return new Promise((resolve) => {
-        sessionMiddleware(req, {} as any, () => {
-            resolve(
-                req.session as session.Session & {
-                    game: {
-                        id: number;
-                        host: { id: number; name: string };
-                        players: { id: number; name: string }[];
-                    };
-                }
-            );
-        });
-    });
-};
+>();
 
 // TODO: dupe player names
 // TODO: test when host immediately joins after hosting
 // WebSocket connection handling
 wss.on("connection", async (ws, req) => {
-    const cookies = parse(req.headers.cookie || "");
-    const sessionId = req.headers.cookie?.match(
-        /connect\.sid=s%3A([^;]*)/
-    )?.[1]; // extract session ID
-    const session = await getSession(req);
-    session.game = session.game || { id: Date.now(), players: [], host: null }; // ensure session always exists // TODO: replace with GUID
-
-    if (!sessionId) {
-        console.log("No session found, creating a new session."); // TODO: store sessions in database
-    }
-
     ws.on("message", (message) => {
         const data = JSON.parse(message.toString());
         console.log("Message received");
@@ -94,36 +69,35 @@ wss.on("connection", async (ws, req) => {
         //* Host Actions
 
         // Handle host creating a session (and also joining as a player)
+
+        // Handle host creating a session
         if (data.type === "host") {
-            console.log("Messaged type 'host' received");
-            if (session.game.host) {
+            const gameId = Math.random().toString(36).substring(2, 6); // Generates a random 4-character string
+
+            if (games[gameId]) {
                 ws.send(
                     JSON.stringify({
                         type: "error",
-                        message: "A host already exists",
+                        message: "A host already exists for this game",
                     })
-                );
-                console.log(
-                    `Host ${data.name} attempted to join as host but a host ${session.game.host.name} already exists`
                 );
                 return;
             }
 
-            const hostPlayer = {
-                id: Date.now(),
-                name: data.name || "Host",
-            };
+            const hostPlayer = new Player(data.name, true);
 
-            session.game.host = hostPlayer;
-            session.game.players.push(hostPlayer); // Add host to players array
-            session.save();
+            games[gameId] = new Game(gameId, hostPlayer);
 
-            clients.set(ws, { session, player: hostPlayer, isHost: true });
+            clients.set(ws, { gameId, playerId: hostPlayer.id, isHost: true });
 
-            console.log(
-                `Host "${hostPlayer.name}" started and joined the game!`
+            console.log(`Game ${gameId} started by host "${hostPlayer.name}"`);
+            ws.send(
+                JSON.stringify({
+                    type: "gameCreated",
+                    gameId,
+                    host: hostPlayer,
+                })
             );
-            broadcast({ type: "playerJoined", player: hostPlayer });
         }
 
         // Handle host starting game
@@ -131,10 +105,66 @@ wss.on("connection", async (ws, req) => {
             const client = clients.get(ws);
             if (!client) return;
 
-            console.log(`${client.player.name} started the game.`);
-            broadcast({
+            // console.log(`${client.player.name} started the game.`);
+            broadcast(client.gameId, {
                 type: "startGame",
             });
+        }
+
+        // Handle host starting round
+        if (data.type === "startRound") {
+            const client = clients.get(ws);
+            if (!client) return;
+            games[client.gameId].incrementRound();
+
+            // console.log(`${client.player.name} started the round.`);
+            broadcast(client.gameId, {
+                type: "startRound",
+                question:
+                    triviaQuestions[games[client.gameId].getRound()].question,
+                choices:
+                    triviaQuestions[games[client.gameId].getRound()].choices,
+            });
+        }
+
+        // Handle player answering a question
+        if (data.type === "answer") {
+            const client = clients.get(ws);
+            if (!client) return;
+            var game = games[client.gameId];
+            var round = game.getRound();
+            var correctAnswer = triviaQuestions[round].answer;
+
+            //Set Answer for player
+            game.setAnswerForPlayer(
+                client.playerId,
+                data.answer,
+                data.answer === correctAnswer
+            );
+
+            //Find out if its the last answer for the round
+            var allAnswered = true;
+            var players = game.getPlayers();
+
+            players.forEach((player) => {
+                if (player.getAnswer(round) === undefined) {
+                    allAnswered = false;
+                }
+            });
+
+            if (allAnswered) {
+                var idiots: string[] = [];
+                players.forEach((player) => {
+                    if (player.getAnswer(round) !== correctAnswer) {
+                        idiots.push(player.name);
+                    }
+                });
+                broadcast(client.gameId, {
+                    type: "roundEnd",
+                    idiots: idiots,
+                    answer: correctAnswer,
+                });
+            }
         }
 
         // Handle host kicking a player
@@ -183,7 +213,7 @@ wss.on("connection", async (ws, req) => {
             console.log(
                 `${playerToKick.name} was kicked by ${client.player.name}`
             );
-            broadcast({
+            broadcast(client.gameId, {
                 type: "playerKicked",
                 player: playerToKick.name,
                 by: client.player.name,
@@ -193,37 +223,28 @@ wss.on("connection", async (ws, req) => {
         //* Player Actions
         // Handle player joining
         if (data.type === "join") {
-            const playerName =
-                data.name?.trim() || `Player${session.game.players.length + 1}`;
+            const { gameId, name } = data;
+            if (!games[gameId]) {
+                ws.send(
+                    JSON.stringify({ type: "error", message: "Game not found" })
+                );
+                return;
+            }
 
             const player = {
-                id: Date.now(), // TODO: replace with GUID
-                name: playerName,
+                id: uuidv4(),
+                name: name.trim(),
             };
 
-            session.game.players.push(player);
-            session.save();
+            games[gameId].players.push(player);
+            clients.set(ws, { gameId, player, isHost: false });
 
-            clients.set(ws, { session, player });
-
-            console.log(`${player.name} joined the game!`);
-            broadcast({ type: "playerJoined", player });
-        }
-
-        // Handle player answering a question
-        if (data.type === "answer") {
-            const client = clients.get(ws);
-            if (!client) return;
-
-            console.log(`${client.player.name} answered: ${data.answer}`);
-            broadcast({
-                type: "answerReceived",
-                player: client.player.name,
-                answer: data.answer,
-            });
+            console.log(`${player.name} joined game ${gameId}`);
+            broadcast(gameId, { type: "playerJoined", player });
         }
     });
 
+    //TODO: Fix player disconnecting
     ws.on("close", () => {
         const client = clients.get(ws);
         if (client) {
@@ -380,10 +401,12 @@ app.post("/generate-remark", async (req, res) => {
 });
 
 // Broadcast a message to all connected players
-function broadcast(data: any) {
-    wss.clients.forEach((client) => {
-        client.send(JSON.stringify(data));
-    });
+function broadcast(gameId: string, message: any) {
+    for (const [ws, client] of clients.entries()) {
+        if (client.gameId === gameId) {
+            ws.send(JSON.stringify(message));
+        }
+    }
 }
 
 server.listen(PORT, () => {
