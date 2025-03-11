@@ -1,82 +1,78 @@
 [
   {
-    "title": "Wrong Answer Penalty",
-    "description": "Take a sip for each wrong answer in the round."
+    "title": "Single Sip Slip-Up",
+    "description": "Take one sip for each wrong answer."
   },
   {
-    "title": "Multiple Sips",
-    "description": "Take two sips for each wrong answer."
+    "title": "Right Reward",
+    "description": "If correct, others take a sip."
   },
   {
-    "title": "Everyone Wrong",
-    "description": "If everyone gets it wrong, everyone takes a shot."
+    "title": "First to Finish",
+    "description": "First correct answer takes a sip."
   },
   {
-    "title": "All Correct",
-    "description": "If everyone gets it right, everyone takes a sip."
+    "title": "Cheers to Correct",
+    "description": "-toast with a sip when right."
   },
   {
-    "title": "Right Answer Only",
-    "description": "Only those who got it right take a sip."
+    "title": "Lone Wolf",
+    "description": "Only correct? Assign sips."
   },
   {
-    "title": "Right Streak",
-    "description": "If you get two right answers in a row, take a shot."
+    "title": "Group Guilt",
+    "description": "Everyone wrong? Everyone drinks."
   },
   {
-    "title": "Someone's Wrong",
-    "description": "If someone gets it wrong, everyone else assigns them a sip."
+    "title": "Majority Mistake",
+    "description": "Majority wrong? Take two sips."
   },
   {
-    "title": "Assign Sips",
-    "description": "If you get it wrong, you assign sips to others."
+    "title": "Majority Mastery",
+    "description": "Majority right? Take three sips."
   },
   {
-    "title": "High-Five Last",
-    "description": "Everyone high-fives, and the last person to do so takes a sip."
+    "title": "Streak Sipper",
+    "description": "Three correct in a row? Take a shot."
   },
   {
-    "title": "Fastest Wrong",
-    "description": "The person who answered wrong the fastest takes a sip."
+    "title": "Slippery Streak",
+    "description": "Two wrong in a row? Take two sips."
   },
   {
-    "title": "Speed Penalty",
-    "description": "The slowest to answer takes a sip."
+    "title": "Speedster's Sip",
+    "description": "Fastest correct? Others drink."
   },
   {
-    "title": "Host's Choice",
-    "description": "The host chooses who takes a sip."
+    "title": "Perfect Streak",
+    "description": "Four correct? Take a shot."
   },
   {
-    "title": "Fast Right",
-    "description": "The fastest correct answer makes everyone else take a sip."
+    "title": "Break the Streak",
+    "description": "End someone's streak? Take a sip."
   },
   {
-    "title": "Double Penalty",
-    "description": "Double the sips for the next wrong answer."
+    "title": "Wrong Streaker",
+    "description": "Three wrong? Take three sips."
   },
   {
-    "title": "Wrong Streak",
-    "description": "If you get three wrong answers in a row, take a shot."
+    "title": "Toast the Leader",
+    "description": " Leader after round? Everyone toasts."
   },
   {
-    "title": "Category Challenge",
-    "description": "If a category is announced, everyone answering wrong in that category takes a sip."
+    "title": "Same Answer Sip",
+    "description": "Same as others? Everyone drinks."
   },
   {
-    "title": "Speed to Shot",
-    "description": "The slowest to answer takes a shot."
+    "title": "Blind Sipper",
+    "description": "Random wrong? Take a sip."
   },
   {
-    "title": "Wrong Assign",
-    "description": "Guess who got it wrong; if wrong, take a sip."
+    "title": "Double or Nothing",
+    "description": "Two wrong? Take five sips."
   },
   {
-    "title": "Host Rule",
-    "description": "The host creates a new rule for the round."
-  },
-  {
-    "title": "Explanation Punishment",
-    "description": "If you get it wrong, explain the correct answer and take a sip."
+    "title": "Last Place Lament",
+    "description": "Last in round? Take four sips."
   }
 ]

@@ -84,7 +84,7 @@ wss.on("connection", async (ws, req) => {
             }
 
             const hostPlayer = new Player(data.name, true);
-
+            console.log(hostPlayer, data);
             games[gameId] = new Game(gameId, hostPlayer);
 
             clients.set(ws, { gameId, playerId: hostPlayer.id, isHost: true });
@@ -94,7 +94,7 @@ wss.on("connection", async (ws, req) => {
                 JSON.stringify({
                     type: "gameCreated",
                     gameId,
-                    host: hostPlayer,
+                    hostName: hostPlayer.name,
                 })
             );
         }
@@ -113,8 +113,9 @@ wss.on("connection", async (ws, req) => {
         // Handle host starting round
         if (data.type === "startRound") {
             const client = clients.get(ws);
+
             if (!client) return;
-            games[client.gameId].incrementRound();
+            var round = games[client.gameId].incrementRound();
 
             // console.log(`${client.player.name} started the round.`);
             broadcast(client.gameId, {
@@ -245,7 +246,7 @@ wss.on("connection", async (ws, req) => {
         const client = clients.get(ws);
         if (client) {
             const player = games[client.gameId].getPlayer(client.playerId);
-            console.log(`${player.name} disconnected`);
+            console.log(` disconnected`);
             clients.delete(ws);
 
             broadcast(client.gameId, {

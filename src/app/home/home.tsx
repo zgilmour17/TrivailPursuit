@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Progress } from "../../components/ui/progress";
 import "./home.css";
@@ -6,25 +6,21 @@ import "./home.css";
 import { ChevronLeft } from "lucide-react";
 
 import { SessionFormAnswers } from "@/components/session/session-join";
+import WaitingForUser from "../../components/loading/waiting-for-action";
 import RulesDrawer from "../../components/rules/rule-drawer";
 interface HomeProps {
     answers: SessionFormAnswers;
     onBack: () => void; // Add the back handler
-    onRuleSelection: () => void;
     host: boolean;
+    ws: WebSocket | null;
+    message: string;
 }
 // Define the Home component
-const Home: React.FC<HomeProps> = ({
-    answers,
-    onBack,
-    onRuleSelection,
-    host,
-}) => {
+const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null); // For the correct answer music
     const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
 
     // State to hold the list of badges
-    const [badges, setBadges] = useState<string[]>([]);
 
     // State for the trivia question and its answers
     const [triviaQuestion, setTriviaQuestion] = useState<string | null>(null);
@@ -50,7 +46,7 @@ const Home: React.FC<HomeProps> = ({
                     const nextProgress = Math.max(prev - step, 0);
                     if (nextProgress <= 0) {
                         setProgress(0);
-                        console.log(isAnswered, answerState);
+                        console.log("isanswered:", isAnswered);
                         setIsAnswered((prevIsAnswered) => {
                             if (!prevIsAnswered) {
                                 return true; // Update state correctly
@@ -66,12 +62,28 @@ const Home: React.FC<HomeProps> = ({
         }, 1000);
     };
 
-    useEffect(() => {
-        if (isAnswered) {
-            resolveRound();
-        }
-    }, [isAnswered]);
+    const handleRoundEnd = useCallback(() => {
+        setIsAnswered(true);
 
+        if (selectedAnswer === correctAnswer) {
+            setBouncingAnswer(selectedAnswer);
+            setAnswerState("correct");
+        } else {
+            setAnswerState("incorrect");
+        }
+
+        resolveRound();
+    }, [correctAnswer, selectedAnswer]);
+    useEffect(() => {
+        if (message) {
+            const data = JSON.parse(message);
+            if (data.type === "roundEnd") {
+                setCorrectAnswer(data.answer);
+                setLoading(false);
+                handleRoundEnd();
+            }
+        }
+    }, [message, handleRoundEnd]);
     // Handle generating a trivia question
     const handleGenerateQuestion = async () => {
         setShowQuestion(true); // Show the trivia question
@@ -95,6 +107,7 @@ const Home: React.FC<HomeProps> = ({
                 // Set the selected question and its answers
                 setTriviaQuestion(randomQuestion.question);
                 setTriviaAnswers(randomQuestion.choices);
+                setQuestionNumber(questionNumber + 1);
                 setCorrectAnswer(randomQuestion.answer);
                 setSelectedAnswer(null); // Reset selected answer
                 setAnswerState(""); // Reset answer state
@@ -114,6 +127,13 @@ const Home: React.FC<HomeProps> = ({
         }
     };
 
+    // const onRuleSelection = () => {};
+    // useEffect(() => {
+    //     if (questionNumber > 0 && questionNumber % 3 === 0) {
+    //         onRuleSelection();
+    //     }
+    // }, [questionNumber, onRuleSelection]);
+
     // Handle answer selection
     const handleAnswerClick = (answer: string) => {
         console.log(answer);
@@ -123,33 +143,14 @@ const Home: React.FC<HomeProps> = ({
 
     const resolveRound = () => {
         console.log(selectedAnswer);
-        if (selectedAnswer === correctAnswer) {
-            setBouncingAnswer(selectedAnswer); // Trigger bouncing for the correct answer
-            //var remark = await generateRemark(false);
-            // setRemark(remark); // Generate remark for correct answer
-            setAnswerState("correct");
-        } else if (selectedAnswer !== "") {
-            setAnswerState("incorrect");
-            // var remark = await generateRemark(true);
-            // setRemark(remark); // Generate remark for correct answer
-        } else {
-            setAnswerState("incorrect");
-
-            setSelectedAnswer("");
-        }
-
-        setIsAnswered(true); // Mark as answered};
+        ws?.send(
+            JSON.stringify({
+                type: "answer",
+                answer: selectedAnswer,
+            })
+        );
+        setLoading(true);
     };
-    useEffect(() => {
-        if (answers.topic && !badges.includes(answers.topic)) {
-            setBadges((prevBadges) => {
-                if (!prevBadges.includes(answers.topic)) {
-                    return [...prevBadges, answers.topic];
-                }
-                return prevBadges;
-            });
-        }
-    }, [answerState]);
 
     return (
         <div>
@@ -167,7 +168,10 @@ const Home: React.FC<HomeProps> = ({
             <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
             <div className="">
                 {/* Trivia question display */}
-                {!host && !triviaQuestion ? (
+
+                {loading ? (
+                    <WaitingForUser></WaitingForUser>
+                ) : !host && !triviaQuestion ? (
                     <div className="flex justify-center items-center mb-8">
                         Waiting for host to begin round...
                     </div>
@@ -237,14 +241,6 @@ const Home: React.FC<HomeProps> = ({
                             variant="secondary"
                         >
                             Begin Round!
-                        </Button>
-                        <Button
-                            onClick={onRuleSelection}
-                            className="w-full mt-4"
-                            disabled={!isAnswered}
-                            variant="secondary"
-                        >
-                            Rule Selection Test
                         </Button>
                     </div>
                 )}

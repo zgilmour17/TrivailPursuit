@@ -79,9 +79,9 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
             <div className=" text-white w-full mt-2">
                 {/* <h2 className="text-2xl font-semibold mb-3">Players Joined</h2> */}
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                    {players.map((player) => (
+                    {players.map((player, index) => (
                         <div
-                            key={player}
+                            key={index}
                             className="name animate-fadein"
                             style={{
                                 transform: `rotate(${styles[player]?.rotation}deg)`,

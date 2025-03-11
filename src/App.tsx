@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import backgroundImage from "src/lib/test3.jpg";
 
 import "./App.css";
@@ -32,10 +32,11 @@ function App() {
     const [gameState, setGameState] = useState<any>(null);
     const [players, setPlayers] = useState<string[]>([]);
     const [host, setHost] = useState<boolean>(false);
+    const [message, setMessage] = useState<string>("");
 
     const hasRun = useRef(false); // Declare outside useEffect
 
-    useEffect(() => {
+    const handleWebSocketConnect = (initialMessage: string) => {
         if (hasRun.current) return; // Prevent running again in strict mode
         hasRun.current = true; // Mark effect as executed
 
@@ -46,12 +47,16 @@ function App() {
         socket.onopen = () => {
             console.log("WebSocket connected");
             setWs(socket);
+            if (ws) {
+                ws.send(initialMessage);
+            }
         };
 
         socket.onmessage = (event) => {
+            setMessage(event.data);
             const data = JSON.parse(event.data);
-            console.log("Received:", data);
 
+            console.log("Received:", data);
             if (data.type === "playerJoined") {
                 setPlayers((prev) => [...prev, data.player.name]);
                 console.log(players);
@@ -59,9 +64,12 @@ function App() {
             if (data.type === "startGame") {
                 setStep("home");
             }
+            if (data.type === "gameCreated") {
+                setPlayers((prev) => [...prev, data.hostName]);
+                console.log(players);
+            }
         };
-    }, []);
-
+    };
     // Define back handler function
     const handleBack = () => {
         if (step === "form") {
@@ -77,31 +85,33 @@ function App() {
     const handleFormCompleteHost = (answers: any) => {
         setFormAnswers(answers);
         setHost(true);
+        const message = JSON.stringify({
+            type: "host",
+            name: answers.givenName,
+        });
         if (ws) {
-            console.log("Sending host message");
-            ws.send(
-                JSON.stringify({
-                    type: "host",
-                    name: answers.givenName, // TODO: replace with host name
-                })
-            );
+            ws.send(message);
+        } else {
+            console.log("new", message);
+            handleWebSocketConnect(message);
         }
+
         setStep("waiting"); // Transition to waiting room after form completion
     };
 
     const handleFormCompletePlayer = (answers: any) => {
         setFormAnswers(answers);
         setHost(false);
-
+        const message = JSON.stringify({
+            type: "join",
+            name: answers.givenName, // TODO: replace with player name
+        });
         if (ws) {
-            console.log("Sending player join message");
-            ws.send(
-                JSON.stringify({
-                    type: "join",
-                    name: answers.givenName, // TODO: replace with player name
-                })
-            );
+            ws.send(message);
+        } else {
+            handleWebSocketConnect(message);
         }
+
         setStep("waiting"); // Transition to waiting room after form completion
     };
 
@@ -206,7 +216,8 @@ function App() {
                                 host={host}
                                 answers={formAnswers}
                                 onBack={handleBack}
-                                onRuleSelection={handleRuleSelectionEvent}
+                                ws={ws}
+                                message={message}
                             />
                         </>
                     )}

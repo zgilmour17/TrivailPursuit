@@ -20,8 +20,9 @@ export class Game {
         this.players.delete(player.id);
     }
     // Method to start a new round
-    incrementRound(): void {
+    incrementRound(): number {
         this.roundNumber += 1;
+        return this.roundNumber;
     }
 
     getRound(): number {
