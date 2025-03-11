@@ -5,8 +5,7 @@ import express from "express";
 import session from "express-session";
 import fs from "fs";
 import http from "http";
-import { v4 as uuidv4 } from "uuid";
-import { WebSocketServer } from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 import { Game } from "./classes/game";
 import { Player } from "./classes/player";
 import triviaQuestions from "./trivia_questions.json"; // Adjust the path as needed
@@ -168,57 +167,57 @@ wss.on("connection", async (ws, req) => {
         }
 
         // Handle host kicking a player
-        if (data.type === "kick") {
-            const client = clients.get(ws);
-            if (!client || !client.isHost) {
-                ws.send(
-                    JSON.stringify({
-                        type: "error",
-                        message: "Unauthorized action",
-                    })
-                );
-                return;
-            }
+        // if (data.type === "kick") {
+        //     const client = clients.get(ws);
+        //     if (!client || !client.isHost) {
+        //         ws.send(
+        //             JSON.stringify({
+        //                 type: "error",
+        //                 message: "Unauthorized action",
+        //             })
+        //         );
+        //         return;
+        //     }
 
-            const playerToKick = session.game.players.find(
-                (p) => p.name === data.name
-            );
+        //     const playerToKick = session.game.players.find(
+        //         (p) => p.name === data.name
+        //     );
 
-            if (!playerToKick) {
-                ws.send(
-                    JSON.stringify({
-                        type: "error",
-                        message: "Player not found",
-                    })
-                );
-                return;
-            }
+        //     if (!playerToKick) {
+        //         ws.send(
+        //             JSON.stringify({
+        //                 type: "error",
+        //                 message: "Player not found",
+        //             })
+        //         );
+        //         return;
+        //     }
 
-            // Remove player from session
-            session.game.players = session.game.players.filter(
-                (p) => p.id !== playerToKick.id
-            );
-            session.save();
+        //     // Remove player from session
+        //     session.game.players = session.game.players.filter(
+        //         (p) => p.id !== playerToKick.id
+        //     );
+        //     session.save();
 
-            // Find and disconnect the kicked player
-            for (const [clientWs, clientInfo] of clients.entries()) {
-                if (clientInfo.player.id === playerToKick.id) {
-                    clientWs.send(JSON.stringify({ type: "kicked" }));
-                    clientWs.close();
-                    clients.delete(clientWs);
-                    break;
-                }
-            }
+        //     // Find and disconnect the kicked player
+        //     for (const [clientWs, clientInfo] of clients.entries()) {
+        //         if (clientInfo.player.id === playerToKick.id) {
+        //             clientWs.send(JSON.stringify({ type: "kicked" }));
+        //             clientWs.close();
+        //             clients.delete(clientWs);
+        //             break;
+        //         }
+        //     }
 
-            console.log(
-                `${playerToKick.name} was kicked by ${client.player.name}`
-            );
-            broadcast(client.gameId, {
-                type: "playerKicked",
-                player: playerToKick.name,
-                by: client.player.name,
-            });
-        }
+        //     console.log(
+        //         `${playerToKick.name} was kicked by ${client.player.name}`
+        //     );
+        //     broadcast(client.gameId, {
+        //         type: "playerKicked",
+        //         player: playerToKick.name,
+        //         by: client.player.name,
+        //     });
+        // }
 
         //* Player Actions
         // Handle player joining
@@ -231,13 +230,10 @@ wss.on("connection", async (ws, req) => {
                 return;
             }
 
-            const player = {
-                id: uuidv4(),
-                name: name.trim(),
-            };
+            const player = new Player(name, false);
 
-            games[gameId].players.push(player);
-            clients.set(ws, { gameId, player, isHost: false });
+            games[gameId].addPlayer(player);
+            clients.set(ws, { gameId, playerId: player.id, isHost: false });
 
             console.log(`${player.name} joined game ${gameId}`);
             broadcast(gameId, { type: "playerJoined", player });
@@ -248,9 +244,14 @@ wss.on("connection", async (ws, req) => {
     ws.on("close", () => {
         const client = clients.get(ws);
         if (client) {
-            console.log(`${client.player.name} disconnected`);
+            const player = games[client.gameId].getPlayer(client.playerId);
+            console.log(`${player.name} disconnected`);
             clients.delete(ws);
-            broadcast({ type: "playerLeft", player: client.player.name });
+
+            broadcast(client.gameId, {
+                type: "playerLeft",
+                player: player.name,
+            });
         }
     });
 });

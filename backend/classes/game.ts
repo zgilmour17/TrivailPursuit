@@ -15,6 +15,10 @@ export class Game {
         this.players.set(player.id, player);
     }
 
+    //
+    removePlayer(player: Player): void {
+        this.players.delete(player.id);
+    }
     // Method to start a new round
     incrementRound(): void {
         this.roundNumber += 1;
@@ -26,6 +30,10 @@ export class Game {
 
     getPlayers(): Map<string, Player> {
         return this.players;
+    }
+
+    getPlayer(playerId: string): Player {
+        return this.players[playerId];
     }
 
     // Method to set an answer for a player in the current round
