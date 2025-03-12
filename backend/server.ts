@@ -8,6 +8,7 @@ import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import { Game } from "./classes/game";
 import { Player } from "./classes/player";
+import drinking_rules from "./drinking_rules.json"; // Adjust the path as needed
 import triviaQuestions from "./trivia_questions.json"; // Adjust the path as needed
 
 // setup .env
@@ -115,11 +116,33 @@ wss.on("connection", async (ws, req) => {
             const client = clients.get(ws);
 
             if (!client) return;
-            var round = games[client.gameId].incrementRound();
+            let round = games[client.gameId].incrementRound();
+            if (round % 3 === 0) {
+                broadcast(client.gameId, {
+                    type: "ruleSelection",
+                    rules: drinking_rules,
+                });
+            } else {
+                // console.log(`${client.player.name} started the round.`);
+                broadcast(client.gameId, {
+                    type: "startRound",
+                    question:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .question,
+                    choices:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .choices,
+                });
+            }
+        }
 
-            // console.log(`${client.player.name} started the round.`);
+        // Handle rule selection
+        if (data.type === "ruleChosen") {
+            const client = clients.get(ws);
+            if (!client) return;
             broadcast(client.gameId, {
-                type: "startRound",
+                type: "ruleChosen",
+                rule: data.rule,
                 question:
                     triviaQuestions[games[client.gameId].getRound()].question,
                 choices:
@@ -132,7 +155,7 @@ wss.on("connection", async (ws, req) => {
             const client = clients.get(ws);
             if (!client) return;
             var game = games[client.gameId];
-            var round = game.getRound();
+            let round = game.getRound();
             var correctAnswer = triviaQuestions[round].answer;
 
             //Set Answer for player

@@ -1,41 +1,27 @@
 import React, { useState } from "react";
 
+import { Rule } from "@/app/types/rule";
 import { CircleX } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import RuleCard from "./rule-card";
 import RulesDrawer from "./rule-drawer";
 
-const rules = [
-    {
-        title: "Thumb Master",
-        description:
-            "The 'Thumb Master' can place their thumb down at any time. The last person to do the same must drink.",
-    },
-    {
-        title: "Never Have I Ever",
-        description:
-            "Say something you've never done. Anyone who has done it must drink.",
-    },
-    {
-        title: "Rhyme Time",
-        description:
-            "Say a word, and everyone must rhyme with it. If someone fails, they drink.",
-    },
-    {
-        title: "Category",
-        description:
-            "Pick a category (e.g., fruits). Take turns naming something in that category. If someone repeats or can't think of one, they drink.",
-    },
-    {
-        title: "Movie Quotes",
-        description:
-            "Say a famous movie line. If others recognize it, they drink. If no one knows it, the person who said it drinks.",
-    },
-];
-
-const RuleSelection = ({ onComplete }: { onComplete: () => void }) => {
-    const [ruleIndexes, setRuleIndexes] = useState([0, 1, 2]);
+const RuleSelection = ({
+    onComplete,
+    rules,
+}: {
+    onComplete: (rule: Rule) => void;
+    rules: Rule[];
+}) => {
+    const getRandomIndexes = (): number[] => {
+        const indexes = new Set<number>();
+        while (indexes.size < 3) {
+            indexes.add(Math.floor(Math.random() * 20) + 1);
+        }
+        return Array.from(indexes);
+    };
+    const [ruleIndexes, setRuleIndexes] = useState(getRandomIndexes());
     const [refreshStates, setRefreshStates] = useState([false, false, false]);
 
     const changeRule = (index: number) => {
@@ -48,9 +34,9 @@ const RuleSelection = ({ onComplete }: { onComplete: () => void }) => {
         );
     };
 
-    const handleRuleSelect = (rule: string) => {
-        toast("Rule 3: blah blah has been replaced by a new rule.");
-        onComplete();
+    const handleRuleSelect = (rule: Rule) => {
+        toast(`${rule} Selected`);
+        onComplete(rule);
     };
 
     return (
@@ -68,18 +54,19 @@ const RuleSelection = ({ onComplete }: { onComplete: () => void }) => {
             <div className="flex flex-row space-x-12 relative">
                 {ruleIndexes.map((ruleIndex, i) => (
                     <RuleCard
+                        rule={rules[ruleIndex]}
                         key={i}
                         ruleIndex={ruleIndex}
                         onRefresh={() => changeRule(i)}
                         isRefreshing={refreshStates[i]}
-                        onComplete={() => handleRuleSelect("")}
+                        onComplete={() => handleRuleSelect(rules[ruleIndex])}
                     />
                 ))}
             </div>
             <Button
                 className="mt-4 w-fit animate-fadein"
                 variant="secondary"
-                onClick={() => handleRuleSelect("")}
+                onClick={() => handleRuleSelect({ title: "", description: "" })}
             >
                 Pass <CircleX />
             </Button>

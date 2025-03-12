@@ -1,3 +1,4 @@
+import { Rule } from "@/app/types/rule";
 import { BookOpen } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -11,7 +12,11 @@ import {
 } from "../ui/drawer";
 import DrinkingRules from "./drinking-rules";
 
-const RulesDrawer = () => {
+interface RulesDrawerProps {
+    rules: Rule[];
+}
+
+const RulesDrawer: React.FC<RulesDrawerProps> = ({ rules }) => {
     const handleOnComplete = (index: number) => {};
 
     return (
@@ -38,6 +43,7 @@ const RulesDrawer = () => {
                     </DrawerHeader>
 
                     <DrinkingRules
+                        rules={rules}
                         onComplete={handleOnComplete}
                         drawerMode={true}
                     />

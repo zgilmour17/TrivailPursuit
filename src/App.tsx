@@ -5,7 +5,6 @@ import "./App.css";
 
 import Home from "./app/home/home";
 import { GenerateGame } from "./components/loading/generate-game";
-import RuleSelection from "./components/rules/rule-selection";
 import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
 import { SessionJoinForm } from "./components/session/session-join";
@@ -221,11 +220,11 @@ function App() {
                             />
                         </>
                     )}
-                    {step === "ruleSelection" && (
+                    {/* {step === "ruleSelection" && (
                         <RuleSelection
                             onComplete={handleRuleSelection}
                         ></RuleSelection>
-                    )}
+                    )} */}
                     {step === "GenerateGame" && <GenerateGame></GenerateGame>}
 
                     {/* //? waiting for rule component

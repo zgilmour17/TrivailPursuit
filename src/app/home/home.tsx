@@ -8,6 +8,9 @@ import { ChevronLeft } from "lucide-react";
 import { SessionFormAnswers } from "@/components/session/session-join";
 import WaitingForUser from "../../components/loading/waiting-for-action";
 import RulesDrawer from "../../components/rules/rule-drawer";
+import RuleSelection from "../../components/rules/rule-selection";
+import { Question } from "../types/question";
+import { Rule } from "../types/rule";
 interface HomeProps {
     answers: SessionFormAnswers;
     onBack: () => void; // Add the back handler
@@ -34,6 +37,9 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
     const [isAnswered, setIsAnswered] = useState(true); // Track if an answer has been selected
     const [progress, setProgress] = useState(0);
     const [questionNumber, setQuestionNumber] = useState(0);
+    const [ruleSelection, setRuleSelection] = useState(false);
+    const [rules, setRules] = useState("");
+    const [rulesChosen, setRulesChosen] = useState<Rule[]>([]);
 
     const startTimer = () => {
         setProgress(100);
@@ -82,12 +88,32 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
                 setLoading(false);
                 handleRoundEnd();
             }
+            if (data.type === "ruleSelection") {
+                setRuleSelection(true);
+                setRules(data.rules);
+            }
+            if (data.type === "ruleChosen") {
+                const ruleSelected: Rule = data.rule;
+                setRulesChosen([...rulesChosen, ruleSelected]);
+                let newQ: Question = {
+                    question: data.question,
+                    choices: data.choices,
+                };
+                handleGenerateQuestion(newQ);
+            }
+            if (data.type === "startRound") {
+                let newQ: Question = {
+                    question: data.question,
+                    choices: data.choices,
+                };
+                handleGenerateQuestion(newQ);
+            }
         }
     }, [message, handleRoundEnd]);
+
     // Handle generating a trivia question
-    const handleGenerateQuestion = async () => {
+    const handleGenerateQuestion = (question: Question) => {
         setShowQuestion(true); // Show the trivia question
-        setLoading(true); // Set loading to true to show spinner
         setBouncingAnswer(null);
         // audioRef.current?.pause();
         //loadingAudioRef.current?.play(); // Play loading music
@@ -95,12 +121,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
 
         try {
             //TODO Pick random question from list
-            const response = {
-                question:
-                    "Which company developed the popular game League of Legends?",
-                choices: ["Riot Games", "Valve", "Blizzard", "Epic Games"],
-                answer: "Riot Games",
-            };
+            const response = question;
 
             if (response) {
                 const randomQuestion = response;
@@ -108,7 +129,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
                 setTriviaQuestion(randomQuestion.question);
                 setTriviaAnswers(randomQuestion.choices);
                 setQuestionNumber(questionNumber + 1);
-                setCorrectAnswer(randomQuestion.answer);
+                // setCorrectAnswer(randomQuestion.answer);
                 setSelectedAnswer(null); // Reset selected answer
                 setAnswerState(""); // Reset answer state
                 startTimer();
@@ -123,16 +144,23 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
             setTriviaQuestion("Error loading question...");
             setTriviaAnswers(["Please try again later"]);
         } finally {
-            setLoading(false); // Set loading to false once the question has been set
         }
     };
-
-    // const onRuleSelection = () => {};
-    // useEffect(() => {
-    //     if (questionNumber > 0 && questionNumber % 3 === 0) {
-    //         onRuleSelection();
-    //     }
-    // }, [questionNumber, onRuleSelection]);
+    const startRound = () => {
+        ws?.send(
+            JSON.stringify({
+                type: "startRound",
+            })
+        );
+    };
+    const onRuleSelection = (rule: Rule) => {
+        ws?.send(
+            JSON.stringify({
+                type: "ruleChosen",
+                rule: rule,
+            })
+        );
+    };
 
     // Handle answer selection
     const handleAnswerClick = (answer: string) => {
@@ -168,8 +196,12 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
             <audio ref={audioRef} src="/audio/aiAyHey.mp3" />
             <div className="">
                 {/* Trivia question display */}
-
-                {loading ? (
+                {ruleSelection ? (
+                    <RuleSelection
+                        onComplete={onRuleSelection}
+                        rules={JSON.parse(rules)}
+                    ></RuleSelection>
+                ) : loading ? (
                     <WaitingForUser></WaitingForUser>
                 ) : !host && !triviaQuestion ? (
                     <div className="flex justify-center items-center mb-8">
@@ -218,12 +250,12 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
                                                 (answer === correctAnswer ? (
                                                     <span className="text-white">
                                                         &#10003;
-                                                    </span> // ✅ Tick
+                                                    </span>
                                                 ) : answer ===
                                                   selectedAnswer ? (
                                                     <span className="text-white">
                                                         X
-                                                    </span> // ❌ Cross
+                                                    </span>
                                                 ) : null)}
                                         </div>
                                     </Button>
@@ -235,7 +267,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
                 {host && (
                     <div>
                         <Button
-                            onClick={handleGenerateQuestion}
+                            onClick={startRound}
                             className="w-full "
                             disabled={!isAnswered}
                             variant="secondary"
@@ -245,7 +277,7 @@ const Home: React.FC<HomeProps> = ({ answers, onBack, host, ws, message }) => {
                     </div>
                 )}
 
-                <RulesDrawer></RulesDrawer>
+                <RulesDrawer rules={rulesChosen}></RulesDrawer>
             </div>
         </div>
     );

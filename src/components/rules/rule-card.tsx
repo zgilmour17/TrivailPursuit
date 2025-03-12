@@ -1,3 +1,4 @@
+import { Rule } from "@/app/types/rule";
 import { RefreshCw } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -11,44 +12,48 @@ import {
     DialogTrigger,
 } from "../ui/dialog";
 import DrinkingRules from "./drinking-rules";
-const rules = [
-    {
-        title: "Thumb Master",
-        description:
-            "The 'Thumb Master' can place their thumb down at any time. The last person to do the same must drink.",
-    },
-    {
-        title: "Never Have I Ever",
-        description:
-            "Say something you've never done. Anyone who has done it must drink.",
-    },
-    {
-        title: "Rhyme Time",
-        description:
-            "Say a word, and everyone must rhyme with it. If someone fails, they drink.",
-    },
-    {
-        title: "Category",
-        description:
-            "Pick a category (e.g., fruits). Take turns naming something in that category. If someone repeats or can't think of one, they drink.",
-    },
-    {
-        title: "Movie Quotes",
-        description:
-            "Say a famous movie line. If others recognize it, they drink. If no one knows it, the person who said it drinks.",
-    },
-];
+// const rules = [
+//     {
+//         title: "Thumb Master",
+//         description:
+//             "The 'Thumb Master' can place their thumb down at any time. The last person to do the same must drink.",
+//     },
+//     {
+//         title: "Never Have I Ever",
+//         description:
+//             "Say something you've never done. Anyone who has done it must drink.",
+//     },
+//     {
+//         title: "Rhyme Time",
+//         description:
+//             "Say a word, and everyone must rhyme with it. If someone fails, they drink.",
+//     },
+//     {
+//         title: "Category",
+//         description:
+//             "Pick a category (e.g., fruits). Take turns naming something in that category. If someone repeats or can't think of one, they drink.",
+//     },
+//     {
+//         title: "Movie Quotes",
+//         description:
+//             "Say a famous movie line. If others recognize it, they drink. If no one knows it, the person who said it drinks.",
+//     },
+// ];
 
 const RuleCard = ({
     ruleIndex,
     onRefresh,
     isRefreshing,
     onComplete,
+    rule,
+    rules,
 }: {
     ruleIndex: number;
     onRefresh: () => void;
     isRefreshing: boolean;
     onComplete: () => void;
+    rule: Rule;
+    rules: Rule[];
 }) => {
     return (
         <div className="flex flex-col w-full items-center relative">
@@ -60,11 +65,9 @@ const RuleCard = ({
                         <span></span>
                         <span></span>
                         <div className="content">
-                            <h2 className="font-bold">
-                                {rules[ruleIndex].title}{" "}
-                            </h2>
+                            <h2 className="font-bold">{rule.title} </h2>
                             <p>
-                                <a>{rules[ruleIndex].description}</a>
+                                <a>{rule.description}</a>
                             </p>
                         </div>
                     </div>
@@ -81,7 +84,11 @@ const RuleCard = ({
 
                         <DialogDescription></DialogDescription>
                     </DialogHeader>
-                    <DrinkingRules onComplete={onComplete} drawerMode={false} />
+                    <DrinkingRules
+                        onComplete={onComplete}
+                        drawerMode={false}
+                        rules={rules}
+                    />
                     <DialogFooter>
                         <DialogClose asChild>
                             <Button
