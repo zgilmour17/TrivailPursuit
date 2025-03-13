@@ -1,17 +1,6 @@
 import { Rule } from "@/app/types/rule";
 import { RefreshCw } from "lucide-react";
 import { Button } from "../ui/button";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "../ui/dialog";
-import DrinkingRules from "./drinking-rules";
 // const rules = [
 //     {
 //         title: "Thumb Master",
@@ -46,62 +35,31 @@ const RuleCard = ({
     isRefreshing,
     onComplete,
     rule,
-    rules,
 }: {
     ruleIndex: number;
     onRefresh: () => void;
     isRefreshing: boolean;
-    onComplete: () => void;
+    onComplete: (rule: Rule) => void;
     rule: Rule;
-    rules: Rule[];
+    selectedRules: Rule[];
 }) => {
     return (
         <div className="flex flex-col w-full items-center relative">
-            <Dialog>
-                <DialogTrigger asChild>
-                    <div className="box animate-fadein">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <div className="content">
-                            <h2 className="font-bold">{rule.title} </h2>
-                            <p>
-                                <a>{rule.description}</a>
-                            </p>
-                        </div>
-                    </div>
-                </DialogTrigger>
-
-                <DialogContent
-                    className="sm:max-w-[425px]"
-                    onOpenAutoFocus={(e) => e.preventDefault()}
-                >
-                    <DialogHeader>
-                        <DialogTitle className="text-white text-center">
-                            Choose a rule to replace
-                        </DialogTitle>
-
-                        <DialogDescription></DialogDescription>
-                    </DialogHeader>
-                    <DrinkingRules
-                        onComplete={onComplete}
-                        drawerMode={false}
-                        rules={rules}
-                    />
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button
-                                className="w-full my-auto"
-                                type="submit"
-                                variant="secondary"
-                            >
-                                Go Back
-                            </Button>
-                        </DialogClose>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <div
+                className="box animate-fadein"
+                onClick={() => onComplete(rule)}
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <div className="content">
+                    <h2 className="font-bold">{rule.title} </h2>
+                    <p>
+                        <a>{rule.description}</a>
+                    </p>
+                </div>
+            </div>
 
             <Button
                 variant="ghost"

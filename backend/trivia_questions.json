@@ -1,162 +1,152 @@
 [
   {
-    "question": "Which League of Legends champion is known as the 'Lady of Luminosity'?",
+    "question": "Which League of Legends champion is known as the Card Master?",
     "choices": [
-      "Lux",
+      "Twisted Fate",
       "Jinx",
-      "Ashe",
-      "Senna"
+      "Katarina",
+      "Shaco"
     ],
-    "answer": "Lux"
+    "answer": "Twisted Fate"
   },
   {
-    "question": "Which soccer player has won the most FIFA World Player of the Year awards?",
+    "question": "Which item provides ability power and mana in League of Legends?",
+    "choices": [
+      " Mejai's Soulstealer",
+      "Rabadon's Deathcap",
+      "Sorcery Shoes",
+      "Void Staff"
+    ],
+    "answer": " Mejai's Soulstealer"
+  },
+  {
+    "question": "Who is the all-time leading scorer in the Premier League?",
+    "choices": [
+      "Alan Shearer",
+      "Wayne Rooney",
+      "Andy Cole",
+      "Thierry Henry"
+    ],
+    "answer": "Alan Shearer"
+  },
+  {
+    "question": "Which soccer player has won the most Ballon d'Or awards?",
     "choices": [
       "Lionel Messi",
       "Cristiano Ronaldo",
       "Zinedine Zidane",
-      "Kaka"
+      "Johan Cruyff"
     ],
     "answer": "Lionel Messi"
   },
   {
-    "question": "What is the name of the new game mode introduced in CS2?",
+    "question": "What is the name of the new economy system in CS2?",
+    "choices": [
+      "Round-based Economy",
+      "Match-based Economy",
+      "Skill-based Economy",
+      "Time-based Economy"
+    ],
+    "answer": "Round-based Economy"
+  },
+  {
+    "question": "Which team has won the most FIFA World Cup titles?",
+    "choices": [
+      "Brazil",
+      "Germany",
+      "Italy",
+      "Argentina"
+    ],
+    "answer": "Brazil"
+  },
+  {
+    "question": "Which champion is known for using bombs in League of Legends?",
+    "choices": [
+      "Jinx",
+      "Tristana",
+      "Corki",
+      "Lulu"
+    ],
+    "answer": "Jinx"
+  },
+  {
+    "question": "Which CS2 feature introduces realistic bullet penetration?",
+    "choices": [
+      "Advanced Ballistics",
+      "Recoil Dynamics",
+      "Weapon Handling",
+      "Damage Modifiers"
+    ],
+    "answer": "Advanced Ballistics"
+  },
+  {
+    "question": "Who is the founder of the UEFA Champions League?",
+    "choices": [
+      "Michel Platini",
+      "Lennart Johansson",
+      "Gianni Infantino",
+      "Sepp Blatter"
+    ],
+    "answer": "Lennart Johansson"
+  },
+  {
+    "question": "What is the name of the new map in CS2?",
     "choices": [
       "Dust II",
       "Inferno",
-      "Danger Zone",
-      "Overpass"
-    ],
-    "answer": "Danger Zone"
-  },
-  {
-    "question": "Which League of Legends item provides ability power and mana?",
-    "choices": [
-      "Rabadon's Deathcap",
-      "Void Staff",
-      "Sorcery Shoes",
-      " Mejai's Soulstealer"
-    ],
-    "answer": "Rabadon's Deathcap"
-  },
-  {
-    "question": "Which soccer team has won the most UEFA Champions League titles?",
-    "choices": [
-      "Real Madrid",
-      "AC Milan",
-      "Liverpool",
-      "Bayern Munich"
-    ],
-    "answer": "Real Madrid"
-  },
-  {
-    "question": "What is the maximum number of players allowed on a CS2 team?",
-    "choices": [
-      "5",
-      "4",
-      "3",
-      "2"
-    ],
-    "answer": "5"
-  },
-  {
-    "question": "Which League of Legends champion is a retro-futuristic robot?",
-    "choices": [
-      "Orianna",
-      "Annie",
-      "Senna",
-      "Blitzcrank"
-    ],
-    "answer": "Blitzcrank"
-  },
-  {
-    "question": "Who is the all-time leading scorer in the FIFA World Cup?",
-    "choices": [
-      "Pelé",
-      "Miroslav Klose",
-      "Ronaldo",
-      "Lionel Messi"
-    ],
-    "answer": "Miroslav Klose"
-  },
-  {
-    "question": "What is the name of the map introduced in CS2?",
-    "choices": [
-      "Inferno",
-      "Dust II",
       "Overpass",
-      "Vertigo"
+      "Haven"
     ],
-    "answer": "Overpass"
+    "answer": "Haven"
   },
   {
-    "question": "Which League of Legends champion is known for their ultimate ability 'Hall of Mirrors'?",
+    "question": "In soccer, what is the term for a goal scored from a direct free-kick?",
     "choices": [
-      "LeBlanc",
-      "Anivia",
-      "Lux",
-      "Syndra"
+      "Direct Goal",
+      "Free-kick Goal",
+      "Own Goal",
+      "Assist"
     ],
-    "answer": "LeBlanc"
+    "answer": "Free-kick Goal"
   },
   {
-    "question": "Which soccer player is known as 'The Flea'?",
+    "question": "Which League of Legends champion is known as the King of the Void?",
+    "choices": [
+      "Kha'Zix",
+      "Rek'Sai",
+      "Voidbringer",
+      "Cho'Gath"
+    ],
+    "answer": "Kha'Zix"
+  },
+  {
+    "question": "What is the new game mode in CS2?",
+    "choices": [
+      "Recoil Master",
+      "Recoil Mode",
+      "Classic Mode",
+      "Recoil Challenge"
+    ],
+    "answer": "Recoil Mode"
+  },
+  {
+    "question": "Which soccer player is known for his dribbling skills?",
     "choices": [
       "Lionel Messi",
       "Cristiano Ronaldo",
-      "Sergio Agüero",
-      "Andrés Iniesta"
+      "Neymar Jr.",
+      "Kylian Mbappé"
     ],
     "answer": "Lionel Messi"
   },
   {
-    "question": "What is the name of the new/packages system in CS2?",
+    "question": "What is the name of the new ranking system in CS2?",
     "choices": [
-      "Intel",
-      "Operations",
-      "Cases",
-      "Skins"
+      "Skill Groups",
+      "Rank Distribution",
+      "Skill Levels",
+      "Matchmaking Tiers"
     ],
-    "answer": "Operations"
-  },
-  {
-    "question": "Which League of Legends champion uses a fishing rod as a weapon?",
-    "choices": [
-      "Fizz",
-      "Nautilus",
-      " Blitzcrank",
-      "Thresh"
-    ],
-    "answer": "Blitzcrank"
-  },
-  {
-    "question": "Which soccer team is based in Camp Nou?",
-    "choices": [
-      "Real Madrid",
-      "FC Barcelona",
-      "Atletico Madrid",
-      "Valencia CF"
-    ],
-    "answer": "FC Barcelona"
-  },
-  {
-    "question": "What is the name of the CS2 update that added a new anti-cheat system?",
-    "choices": [
-      "VAC",
-      "Prime",
-      "Trust Factor",
-      " Source 2"
-    ],
-    "answer": "VAC"
-  },
-  {
-    "question": "Which League of Legends champion is known as the 'Masked Marauder'?",
-    "choices": [
-      "Senna",
-      "Viktor",
-      "Twisted Fate",
-      "Shaco"
-    ],
-    "answer": "Twisted Fate"
+    "answer": "Skill Groups"
   }
 ]

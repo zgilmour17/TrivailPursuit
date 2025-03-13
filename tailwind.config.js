@@ -70,6 +70,36 @@ module.exports = {
                     "0%": { opacity: 0 },
                     "100%": { opacity: 1 },
                 },
+                slideInLeft: {
+                    "0%": { transform: "translateX(-100vw)" },
+                    "50%": { transform: "translateX(0)" },
+                    "100%": { transform: "translateX(-100vw)" },
+                },
+                slideInRight: {
+                    "0%": { transform: "translateX(100vw)" },
+                    "50%": { transform: "translateX(0)" },
+                    "100%": { transform: "translateX(100vw)" },
+                },
+                exitLeft: {
+                    "0%": { transform: "translateX(-100%) scaleX(-1)" },
+                    "50%": { transform: "translateX(-100%) scaleX(-1)" },
+                    "100%": { transform: "translateX(-1000%) scaleX(-1)" }, // Moves to the left
+                },
+                exitRight: {
+                    "0%": { transform: "translateX(100%)" },
+                    "50%": { transform: "translateX(100%)" },
+                    "100%": { transform: "translateX(1000%)" }, // Moves to the right
+                },
+                slideInFromCenter: {
+                    "0%": {
+                        clipPath: "inset(0 50% 0 50%)", // Initially hide the text from the sides
+                        opacity: 1, // Make the text visible after 4 seconds
+                    },
+                    "100%": {
+                        clipPath: "inset(0 0 0 0)", // Reveal the text completely from the center
+                        opacity: 1, // Make the text visible after 4 seconds
+                    },
+                },
             },
             animation: {
                 fadein: "fade-in 3s ease-in-out ",
@@ -77,6 +107,11 @@ module.exports = {
                 typing: "typing 1s steps(100) ",
                 typingslow: "typing 3s steps(100) 0s",
                 typingslowleaving: "typing 3s steps(100) 0s 1 reverse",
+                slideInLeft: "slideInLeft 4s ease-in-out infinite",
+                slideInRight: "slideInRight 4s ease-in-out infinite",
+                exitLeft: "exitLeft 4s ease-in-out forwards", // Apply exit animation to the left video
+                exitRight: "exitRight 4s ease-in-out forwards", // Apply exit animation to the right video
+                slideInFromCenter: "slideInFromCenter 1s ease-out 2s forwards", // Delay 4s before starting the animation
             },
         },
     },

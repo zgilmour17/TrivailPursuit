@@ -9,7 +9,6 @@ import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
 import { SessionJoinForm } from "./components/session/session-join";
 import { TrivailWaitingRoom } from "./components/session/waitingroom";
-import { generateRules, generateSessionQuestions } from "./lib/api-service";
 
 function App() {
     const [step, setStep] = useState<
@@ -46,9 +45,9 @@ function App() {
         socket.onopen = () => {
             console.log("WebSocket connected");
             setWs(socket);
-            if (ws) {
-                ws.send(initialMessage);
-            }
+
+            console.log("send", initialMessage);
+            socket.send(initialMessage);
         };
 
         socket.onmessage = (event) => {
@@ -122,33 +121,33 @@ function App() {
     const handleWaitingRoomComplete = async () => {
         setStep("GenerateGame");
         try {
-            // Generate trivia questions
-            const res = await generateSessionQuestions(
-                ["league of legends", "soccer", "cs2"],
-                15
-            );
-            const rulesres = await generateRules(20);
-            //! Send trivia questions to save to jsonfile in backend
-            await fetch("http://localhost:4000/write-trivia-questions", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ questions: res }),
-            });
+            // // Generate trivia questions
+            // const res = await generateSessionQuestions(
+            //     ["league of legends", "soccer", "cs2"],
+            //     15
+            // );
+            // const rulesres = await generateRules(20);
+            // //! Send trivia questions to save to jsonfile in backend
+            // await fetch("http://localhost:4000/write-trivia-questions", {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify({ questions: res }),
+            // });
 
-            //! Send rules to save to jsonfile in backend
-            await fetch("http://localhost:4000/write-rules", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ rules: rulesres }),
-            });
+            // //! Send rules to save to jsonfile in backend
+            // await fetch("http://localhost:4000/write-rules", {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify({ rules: rulesres }),
+            // });
 
-            console.log(
-                "Trivia questions written to lib/trivia_questions.json"
-            );
+            // console.log(
+            //     "Trivia questions written to lib/trivia_questions.json"
+            // );
             if (ws) {
                 console.log("Starting game");
                 ws.send(

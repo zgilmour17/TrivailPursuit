@@ -1,78 +1,82 @@
 [
   {
-    "title": "Single Sip Slip-Up",
-    "description": "Take one sip for each wrong answer."
+    "title": "Wrong Answer",
+    "description": "If you answer incorrectly, take a shot."
   },
   {
-    "title": "Right Reward",
-    "description": "If correct, others take a sip."
+    "title": "Correct Answer",
+    "description": "If you answer correctly, everyone else takes a shot."
   },
   {
-    "title": "First to Finish",
-    "description": "First correct answer takes a sip."
+    "title": "First to Answer",
+    "description": "The first player to answer correctly gets to assign a shot to another player."
   },
   {
-    "title": "Cheers to Correct",
-    "description": "-toast with a sip when right."
+    "title": "Slow Starter",
+    "description": "If you are the last to answer, take two shots."
   },
   {
-    "title": "Lone Wolf",
-    "description": "Only correct? Assign sips."
+    "title": " Majority Vote",
+    "description": "If most players answer incorrectly, everyone takes a shot."
   },
   {
-    "title": "Group Guilt",
-    "description": "Everyone wrong? Everyone drinks."
+    "title": "Host's Choice",
+    "description": "The host assigns a shot to any player after each round."
   },
   {
-    "title": "Majority Mistake",
-    "description": "Majority wrong? Take two sips."
-  },
-  {
-    "title": "Majority Mastery",
-    "description": "Majority right? Take three sips."
-  },
-  {
-    "title": "Streak Sipper",
-    "description": "Three correct in a row? Take a shot."
-  },
-  {
-    "title": "Slippery Streak",
-    "description": "Two wrong in a row? Take two sips."
-  },
-  {
-    "title": "Speedster's Sip",
-    "description": "Fastest correct? Others drink."
-  },
-  {
-    "title": "Perfect Streak",
-    "description": "Four correct? Take a shot."
-  },
-  {
-    "title": "Break the Streak",
-    "description": "End someone's streak? Take a sip."
-  },
-  {
-    "title": "Wrong Streaker",
-    "description": "Three wrong? Take three sips."
-  },
-  {
-    "title": "Toast the Leader",
-    "description": " Leader after round? Everyone toasts."
-  },
-  {
-    "title": "Same Answer Sip",
-    "description": "Same as others? Everyone drinks."
-  },
-  {
-    "title": "Blind Sipper",
-    "description": "Random wrong? Take a sip."
+    "title": "Round Robin",
+    "description": "Each player takes a shot in order after each round."
   },
   {
     "title": "Double or Nothing",
-    "description": "Two wrong? Take five sips."
+    "description": "If you answer correctly after a wrong answer, skip your next shot."
   },
   {
-    "title": "Last Place Lament",
-    "description": "Last in round? Take four sips."
+    "title": "Lag Penalty",
+    "description": "If your answer takes longer than 10 seconds, take an extra shot."
+  },
+  {
+    "title": "Steal the Shot",
+    "description": "If you answer correctly, you can pass your shot to another player."
+  },
+  {
+    "title": "Chain Reaction",
+    "description": "If three players answer incorrectly in a row, everyone takes a shot."
+  },
+  {
+    "title": "Sore Winner",
+    "description": "If you answer correctly and mock another player, take a shot."
+  },
+  {
+    "title": "Wrong Streak",
+    "description": "If you get three wrong answers in a row, take three shots."
+  },
+  {
+    "title": "Lucky Guess",
+    "description": "If you guess correctly without knowing the answer, take a shot."
+  },
+  {
+    "title": "Debunker",
+    "description": "If you correct the host's mistake, the host takes a shot."
+  },
+  {
+    "title": "Speedster",
+    "description": "If you answer first and correctly, everyone else takes a shot."
+  },
+  {
+    "title": "Blindside",
+    "description": "If you answer incorrectly and no one else does, take two shots."
+  },
+  {
+    "title": "Group Punishment",
+    "description": "If everyone answers incorrectly, everyone takes a shot."
+  },
+  {
+    "title": "Leaderboard Shame",
+    "description": "The player with the most wrong answers takes a shot."
+  },
+  {
+    "title": "Host's Fault",
+    "description": "If the host makes a mistake in the question, the host takes a shot."
   }
 ]

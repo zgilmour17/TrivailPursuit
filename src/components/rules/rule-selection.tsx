@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import { Rule } from "@/app/types/rule";
 import { CircleX } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "../ui/button";
 import RuleCard from "./rule-card";
 import RulesDrawer from "./rule-drawer";
@@ -10,9 +9,11 @@ import RulesDrawer from "./rule-drawer";
 const RuleSelection = ({
     onComplete,
     rules,
+    selectedRules,
 }: {
     onComplete: (rule: Rule) => void;
     rules: Rule[];
+    selectedRules: Rule[];
 }) => {
     const getRandomIndexes = (): number[] => {
         const indexes = new Set<number>();
@@ -35,7 +36,7 @@ const RuleSelection = ({
     };
 
     const handleRuleSelect = (rule: Rule) => {
-        toast(`${rule} Selected`);
+        console.log("rule selected", rule);
         onComplete(rule);
     };
 
@@ -54,12 +55,13 @@ const RuleSelection = ({
             <div className="flex flex-row space-x-12 relative">
                 {ruleIndexes.map((ruleIndex, i) => (
                     <RuleCard
+                        selectedRules={selectedRules}
                         rule={rules[ruleIndex]}
                         key={i}
                         ruleIndex={ruleIndex}
                         onRefresh={() => changeRule(i)}
                         isRefreshing={refreshStates[i]}
-                        onComplete={() => handleRuleSelect(rules[ruleIndex])}
+                        onComplete={handleRuleSelect}
                     />
                 ))}
             </div>
@@ -70,7 +72,7 @@ const RuleSelection = ({
             >
                 Pass <CircleX />
             </Button>
-            <RulesDrawer />
+            <RulesDrawer rules={selectedRules} />
         </div>
     );
 };

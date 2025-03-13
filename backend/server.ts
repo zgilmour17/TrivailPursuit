@@ -64,7 +64,7 @@ const clients = new Map<
 wss.on("connection", async (ws, req) => {
     ws.on("message", (message) => {
         const data = JSON.parse(message.toString());
-        console.log("Message received");
+        console.log("Message received", data);
 
         //* Host Actions
 
@@ -73,7 +73,7 @@ wss.on("connection", async (ws, req) => {
         // Handle host creating a session
         if (data.type === "host") {
             const gameId = Math.random().toString(36).substring(2, 6); // Generates a random 4-character string
-
+            console.log("got host", data);
             if (games[gameId]) {
                 ws.send(
                     JSON.stringify({
@@ -116,11 +116,17 @@ wss.on("connection", async (ws, req) => {
             const client = clients.get(ws);
 
             if (!client) return;
+            let game = games[client.gameId];
             let round = games[client.gameId].incrementRound();
             if (round % 3 === 0) {
                 broadcast(client.gameId, {
                     type: "ruleSelection",
                     rules: drinking_rules,
+                });
+            } else if (round % 5 === 0) {
+                broadcast(client.gameId, {
+                    type: "leaderboard",
+                    players: game.getPlayers(),
                 });
             } else {
                 // console.log(`${client.player.name} started the round.`);
@@ -140,6 +146,7 @@ wss.on("connection", async (ws, req) => {
         if (data.type === "ruleChosen") {
             const client = clients.get(ws);
             if (!client) return;
+            games[client.gameId].addRule(data.rule);
             broadcast(client.gameId, {
                 type: "ruleChosen",
                 rule: data.rule,
@@ -269,13 +276,12 @@ wss.on("connection", async (ws, req) => {
         const client = clients.get(ws);
         if (client) {
             const player = games[client.gameId].getPlayer(client.playerId);
-            console.log(` disconnected`);
-            clients.delete(ws);
-
+            console.log(`player disconnected`);
             broadcast(client.gameId, {
                 type: "playerLeft",
                 player: player.name,
             });
+            clients.delete(ws);
         }
     });
 });
@@ -379,7 +385,10 @@ app.post("/generate-rules", async (req, res) => {
     const { amount } = req.body;
     if (!amount) return res.status(400).json({ error: "amount is required" });
     console.log(amount);
-    const promptTemplate = `respond with ${amount} drinking rules for a trivia game where players are playing concurrently and the host begins each round for all players where a timer starts and you must choose between 4 choices. It is played on the user's phone and each round shows who got it right or wrong. respond with a json list with each object formatted like the one below.
+    const promptTemplate = `respond with ${amount} drinking rules for a trivia game where players are 
+	playing concurrently and the host begins each round for all players where a timer starts and you must choose between 4 choices. 
+	It is played on the user's phone and each round shows who got it right or wrong. respond with a json list with each object formatted like the one below. 
+	Please make the punishment be sip amounts.
 	{
 	"title": "<TITLE>",
 	"description": "<DESCRIPTION",

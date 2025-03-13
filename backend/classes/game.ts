@@ -1,10 +1,11 @@
+import { Rule } from "../types/rule";
 import { Player } from "./player";
 
 export class Game {
     private id: string;
     private players: Map<string, Player> = new Map<string, Player>(); // You can change `string[]` to a more detailed Player type if necessary
     private roundNumber: number = 0;
-
+    private rules: Rule[] = [];
     constructor(gameId: string, hostPlayer: Player) {
         this.id = gameId;
         this.players = this.players.set(hostPlayer.id, hostPlayer); // Initialize with the host player
@@ -29,8 +30,16 @@ export class Game {
         return this.roundNumber;
     }
 
-    getPlayers(): Map<string, Player> {
-        return this.players;
+    getPlayers(): Player[] {
+        return Array.from(this.players.values());
+    }
+
+    addRule(rule: Rule) {
+        this.rules.push(rule);
+    }
+
+    getRules(): Rule[] {
+        return this.rules;
     }
 
     getPlayer(playerId: string): Player {
