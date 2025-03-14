@@ -62,12 +62,17 @@ module.exports = {
                         borderColor: "white",
                     },
                 },
-                "fade-in": {
+                fadeIn: {
                     "0%": { opacity: 0 },
                     "100%": { opacity: 1 },
                 },
-                "fade-out": {
+                fadeOut: {
                     "0%": { opacity: 0 },
+                    "100%": { opacity: 1 },
+                },
+                fadeInSlow: {
+                    "0%": { opacity: 0 },
+                    "50%": { opacity: 0 },
                     "100%": { opacity: 1 },
                 },
                 slideInLeft: {
@@ -92,7 +97,7 @@ module.exports = {
                 },
                 slideInFromCenter: {
                     "0%": {
-                        clipPath: "inset(0 50% 0 50%)", // Initially hide the text from the sides
+                        clipPath: "inset(0 500% 0 500%)", // Initially hide the text from the sides
                         opacity: 1, // Make the text visible after 4 seconds
                     },
                     "100%": {
@@ -102,8 +107,9 @@ module.exports = {
                 },
             },
             animation: {
-                fadein: "fade-in 3s ease-in-out ",
-                fadeout: "fade-out 3s ease-in-out ",
+                fadein: "fadeIn 3s ease-in-out ",
+                fadeinslow: "fadeInSlow 4s ease-in-out",
+                fadeout: "fadeOut 3s ease-in-out ",
                 typing: "typing 1s steps(100) ",
                 typingslow: "typing 3s steps(100) 0s",
                 typingslowleaving: "typing 3s steps(100) 0s 1 reverse",
@@ -111,7 +117,7 @@ module.exports = {
                 slideInRight: "slideInRight 4s ease-in-out infinite",
                 exitLeft: "exitLeft 4s ease-in-out forwards", // Apply exit animation to the left video
                 exitRight: "exitRight 4s ease-in-out forwards", // Apply exit animation to the right video
-                slideInFromCenter: "slideInFromCenter 1s ease-out 2s forwards", // Delay 4s before starting the animation
+                slideInFromCenter: "slideInFromCenter 2s ease-in-out forwards", // Delay 4s before starting the animation
             },
         },
     },

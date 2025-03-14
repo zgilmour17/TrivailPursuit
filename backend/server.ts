@@ -272,18 +272,34 @@ wss.on("connection", async (ws, req) => {
     });
 
     //TODO: Fix player disconnecting
-    ws.on("close", () => {
+    ws.on("close", () => handleClientDisconnect(ws));
+
+    function handleClientDisconnect(ws) {
         const client = clients.get(ws);
-        if (client) {
-            const player = games[client.gameId].getPlayer(client.playerId);
-            console.log(`player disconnected`);
-            broadcast(client.gameId, {
-                type: "playerLeft",
-                player: player.name,
-            });
-            clients.delete(ws);
+        if (!client) return; // Ensure client exists
+
+        const game = games[client.gameId];
+        if (game) {
+            const player = game.getPlayer(client.playerId);
+            if (player) {
+                console.log(
+                    `Player ${player.name} has left game ${client.gameId}`
+                );
+                broadcast(client.gameId, {
+                    type: "playerLeft",
+                    player: player.name,
+                });
+            } else {
+                console.warn(
+                    `Player with ID ${client.playerId} not found in game ${client.gameId}`
+                );
+            }
+        } else {
+            console.warn(`Game with ID ${client.gameId} not found`);
         }
-    });
+
+        clients.delete(ws); // Ensure client is always removed
+    }
 });
 
 async function askAI(prompt: string): Promise<string> {

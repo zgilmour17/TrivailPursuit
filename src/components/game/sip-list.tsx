@@ -12,7 +12,7 @@ export default function SipList({ losers }: SipListProps) {
             <div className="relative w-full h-[124px] overflow-hidden flex justify-center items-center">
                 {/* Left Video (Starting from the center) */}
                 <video
-                    className="scale-x-[-1] absolute left-1/2 animate-exitLeft translate-x-[-100%]"
+                    className="scale-x-[-1] absolute left-1/2 animate-exitLeft z-40"
                     autoPlay
                     muted
                     playsInline
@@ -21,14 +21,14 @@ export default function SipList({ losers }: SipListProps) {
                 />
 
                 {/* Title (fade-in animation) */}
-                <h1 className="text-4xl font-bold animate-slideInFromCenter opacity-0 flex">
-                    <div className="mr-2 scale-x-[-1]">🍺</div> Sip List{" "}
-                    <div className=" ml-2">🍺</div>
+                <h1 className="text-4xl font-bold   flex">
+                    <div className="mr-1 scale-x-[-1]">🍺</div> Sip List
+                    <div className="ml-1">🍺</div>
                 </h1>
 
                 {/* Right Video (Starting from the center) */}
                 <video
-                    className="absolute transform translate-x-[100%] right-1/2 animate-exitRight"
+                    className="absolute right-1/2 animate-exitRight z-40"
                     autoPlay
                     muted
                     playsInline
@@ -36,7 +36,7 @@ export default function SipList({ losers }: SipListProps) {
                     src="/beeranimation.mp4"
                 />
             </div>
-            <div className="w-full animate-fadein">
+            <div className="w-full animate-fadeinslow">
                 <div className="w-full max-w-lg bg-gray-900 bg-opacity-90 p-6 rounded-lg shadow-2xl border-4 border-neon-red relative mb-4">
                     <ul className="text-center space-y-3 grid grid-cols">
                         {losers.length > 0 ? (
