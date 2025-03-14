@@ -7,6 +7,7 @@ import WaitingForUser from "../loading/waiting-for-action";
 import RulesDrawer from "../rules/rule-drawer";
 import RuleSelection from "../rules/rule-selection";
 import { Button } from "../ui/button";
+import CountdownOverlay from "./countdown";
 import TriviaLeaderboard from "./leaderboard";
 import SipList from "./sip-list";
 import Timer from "./timer";
@@ -34,6 +35,7 @@ const TriviaGame: React.FC<TriviaGameProps> = ({ ws, message, host }) => {
     const [losers, setLosers] = useState<string[]>([]); // Track players who got the question wrong
     const [showLosers, setShowLosers] = useState<boolean>(false); // Track players who got the question wrong
     const [allowBegin, setAllowBegin] = useState<boolean>(true);
+    const [showCountdown, setShowCountdown] = useState<boolean>(false);
 
     useEffect(() => {
         if (message) {
@@ -55,7 +57,7 @@ const TriviaGame: React.FC<TriviaGameProps> = ({ ws, message, host }) => {
             }
             if (data.type === "startRound" || data.type === "ruleChosen") {
                 setAllowBegin(false);
-
+                setShowCountdown(true);
                 setQuestion({ question: data.question, choices: data.choices });
                 setRuleSelection(false);
                 if (data.type === "ruleChosen") {
@@ -94,9 +96,18 @@ const TriviaGame: React.FC<TriviaGameProps> = ({ ws, message, host }) => {
         setIsAnswered(true);
     };
 
+    const handleCountdownComplete = () => {
+        console.log("Countdown finished!");
+        setShowCountdown(false); // Hide overlay when countdown is done
+    };
+
     return (
         <div>
-            {showLosers ? (
+            {showCountdown ? (
+                <CountdownOverlay
+                    onComplete={handleCountdownComplete}
+                ></CountdownOverlay>
+            ) : showLosers ? (
                 <div>
                     <SipList losers={losers} />
                 </div>

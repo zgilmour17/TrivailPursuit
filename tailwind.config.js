@@ -46,34 +46,34 @@ module.exports = {
             },
             keyframes: {
                 typing: {
-                    "0%": {
-                        width: "0%",
-                        visibility: "hidden",
-                    },
-                    "100%": {
-                        width: "100%",
-                    },
+                    "0%": { width: "0%", visibility: "hidden" },
+                    "100%": { width: "100%" },
                 },
                 blink: {
-                    "50%": {
-                        borderColor: "transparent",
-                    },
-                    "100%": {
-                        borderColor: "white",
-                    },
+                    "50%": { borderColor: "transparent" },
+                    "100%": { borderColor: "white" },
                 },
                 fadeIn: {
                     "0%": { opacity: 0 },
                     "100%": { opacity: 1 },
                 },
                 fadeOut: {
-                    "0%": { opacity: 0 },
-                    "100%": { opacity: 1 },
+                    "0%": { opacity: 1 },
+                    "100%": { opacity: 0 },
                 },
                 fadeInSlow: {
                     "0%": { opacity: 0 },
                     "50%": { opacity: 0 },
                     "100%": { opacity: 1 },
+                },
+                fadeOutSlow: {
+                    "0%": { opacity: 1 },
+                    "50%": { opacity: 1 },
+                    "100%": { opacity: 0 },
+                },
+                countdownFade: {
+                    "0%": { opacity: 1, transform: "scale(1.2)" },
+                    "100%": { opacity: 0, transform: "scale(0.8)" },
                 },
                 slideInLeft: {
                     "0%": { transform: "translateX(-100vw)" },
@@ -86,38 +86,43 @@ module.exports = {
                     "100%": { transform: "translateX(100vw)" },
                 },
                 exitLeft: {
-                    "0%": { transform: "translateX(-100%) scaleX(-1)" },
-                    "50%": { transform: "translateX(-100%) scaleX(-1)" },
-                    "100%": { transform: "translateX(-1000%) scaleX(-1)" }, // Moves to the left
-                },
-                exitRight: {
-                    "0%": { transform: "translateX(100%)" },
-                    "50%": { transform: "translateX(100%)" },
-                    "100%": { transform: "translateX(1000%)" }, // Moves to the right
-                },
-                slideInFromCenter: {
                     "0%": {
-                        clipPath: "inset(0 500% 0 500%)", // Initially hide the text from the sides
-                        opacity: 1, // Make the text visible after 4 seconds
+                        transform:
+                            "translateX(-100%) translateY(-50%) scaleX(-1)",
+                    },
+                    "50%": {
+                        transform:
+                            "translateX(-100%) translateY(-50%) scaleX(-1)",
                     },
                     "100%": {
-                        clipPath: "inset(0 0 0 0)", // Reveal the text completely from the center
-                        opacity: 1, // Make the text visible after 4 seconds
+                        transform:
+                            "translateX(-1000%) translateY(-50%) scaleX(-1)",
                     },
+                },
+                exitRight: {
+                    "0%": { transform: "translateX(100%) translateY(-50%)" },
+                    "50%": { transform: "translateX(100%) translateY(-50%)" },
+                    "100%": { transform: "translateX(1000%) translateY(-50%)" },
+                },
+                slideInFromCenter: {
+                    "0%": { clipPath: "inset(0 500% 0 500%)", opacity: 1 },
+                    "100%": { clipPath: "inset(0 0 0 0)", opacity: 1 },
                 },
             },
             animation: {
-                fadein: "fadeIn 3s ease-in-out ",
-                fadeinslow: "fadeInSlow 4s ease-in-out",
-                fadeout: "fadeOut 3s ease-in-out ",
-                typing: "typing 1s steps(100) ",
+                fadein: "fadeIn 3s ease-in-out",
+                fadeinslow: "fadeInSlow 3s ease-in-out",
+                fadeout: "fadeOut 3s ease-in-out",
+                fadeoutslow: "fadeOutSlow 3s ease-in-out",
+                typing: "typing 1s steps(100)",
                 typingslow: "typing 3s steps(100) 0s",
                 typingslowleaving: "typing 3s steps(100) 0s 1 reverse",
                 slideInLeft: "slideInLeft 4s ease-in-out infinite",
                 slideInRight: "slideInRight 4s ease-in-out infinite",
-                exitLeft: "exitLeft 4s ease-in-out forwards", // Apply exit animation to the left video
-                exitRight: "exitRight 4s ease-in-out forwards", // Apply exit animation to the right video
-                slideInFromCenter: "slideInFromCenter 2s ease-in-out forwards", // Delay 4s before starting the animation
+                exitLeft: "exitLeft 3s ease-in-out forwards",
+                exitRight: "exitRight 3s ease-in-out forwards",
+                slideInFromCenter: "slideInFromCenter 2s ease-in-out forwards",
+                countdownFade: "countdownFade 1s ease-in-out",
             },
         },
     },

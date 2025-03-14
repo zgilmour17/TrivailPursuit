@@ -123,7 +123,7 @@ wss.on("connection", async (ws, req) => {
                     type: "ruleSelection",
                     rules: drinking_rules,
                 });
-            } else if (round % 5 === 0) {
+            } else if (round) {
                 broadcast(client.gameId, {
                     type: "leaderboard",
                     players: game.getPlayers(),
