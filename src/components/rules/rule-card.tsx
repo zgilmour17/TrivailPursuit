@@ -1,33 +1,6 @@
 import { Rule } from "@/app/types/rule";
 import { RefreshCw } from "lucide-react";
 import { Button } from "../ui/button";
-// const rules = [
-//     {
-//         title: "Thumb Master",
-//         description:
-//             "The 'Thumb Master' can place their thumb down at any time. The last person to do the same must drink.",
-//     },
-//     {
-//         title: "Never Have I Ever",
-//         description:
-//             "Say something you've never done. Anyone who has done it must drink.",
-//     },
-//     {
-//         title: "Rhyme Time",
-//         description:
-//             "Say a word, and everyone must rhyme with it. If someone fails, they drink.",
-//     },
-//     {
-//         title: "Category",
-//         description:
-//             "Pick a category (e.g., fruits). Take turns naming something in that category. If someone repeats or can't think of one, they drink.",
-//     },
-//     {
-//         title: "Movie Quotes",
-//         description:
-//             "Say a famous movie line. If others recognize it, they drink. If no one knows it, the person who said it drinks.",
-//     },
-// ];
 
 const RuleCard = ({
     ruleIndex,
@@ -35,9 +8,10 @@ const RuleCard = ({
     isRefreshing,
     onComplete,
     rule,
+    selectedRules,
 }: {
     ruleIndex: number;
-    onRefresh: () => void;
+    onRefresh?: () => void; // <-- Made this optional
     isRefreshing: boolean;
     onComplete: (rule: Rule) => void;
     rule: Rule;
@@ -61,15 +35,18 @@ const RuleCard = ({
                 </div>
             </div>
 
-            <Button
-                variant="ghost"
-                onClick={onRefresh}
-                disabled={isRefreshing}
-                className="!bg-transparent cursor-pointer animate-fadein mt-20 disabled:opacity-0"
-            >
-                <RefreshCw className="text-white !h-[35px] !w-[35px]" />
-            </Button>
+            {onRefresh && ( // <-- Only render if onRefresh is defined
+                <Button
+                    variant="ghost"
+                    onClick={onRefresh}
+                    disabled={isRefreshing}
+                    className="!bg-transparent cursor-pointer animate-fadein mt-20 disabled:opacity-0"
+                >
+                    <RefreshCw className="text-white !h-[35px] !w-[35px]" />
+                </Button>
+            )}
         </div>
     );
 };
+
 export default RuleCard;

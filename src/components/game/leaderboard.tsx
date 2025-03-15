@@ -15,23 +15,25 @@ export default function TriviaLeaderboard({ players }: TriviaLeaderboardProps) {
 
     return (
         <div className="flex flex-col items-center justify-center mb-4 relative">
+            <h1 className="text-4xl font-bold mb-6 animate-fadeinslower">
+                🏆Leaderboard🏆
+            </h1>
+
             <video
-                className="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%]  z-40 animate-fadeoutslow opacity-0"
+                className="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%]  z-40 animate-fadeoutslower opacity-0"
                 autoPlay
                 muted
                 playsInline
                 ref={videoRef}
                 src="/trophy.mp4"
             />
-            <div className="w-full max-w-md bg-gray-900 bg-opacity-80 p-4 rounded-lg shadow-lg border-2 border-white animate-fadeinslow">
-                <h1 className="text-4xl font-bold mb-6">🏆 Leaderboard 🏆</h1>
-
+            <div className="w-full max-w-md bg-gray-900 bg-opacity-80 p-4 rounded-lg shadow-lg border-2 border-white animate-fadeinslower">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="text-white text-lg">
                             <th className="p-2">Rank</th>
                             <th className="p-2">Player</th>
-                            <th className="p-2 text-right">Correct Answers</th>
+                            <th className="p-2 text-right">Correct</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -112,8 +112,10 @@ module.exports = {
             animation: {
                 fadein: "fadeIn 3s ease-in-out",
                 fadeinslow: "fadeInSlow 3s ease-in-out",
+                fadeinslower: "fadeInSlow 7s ease-in-out",
                 fadeout: "fadeOut 3s ease-in-out",
                 fadeoutslow: "fadeOutSlow 3s ease-in-out",
+                fadeoutslower: "fadeOutSlow 4s ease-in-out",
                 typing: "typing 1s steps(100)",
                 typingslow: "typing 3s steps(100) 0s",
                 typingslowleaving: "typing 3s steps(100) 0s 1 reverse",
