@@ -8,8 +8,9 @@ export interface HomeProps {
     host: boolean;
     ws: WebSocket | null;
     message: string;
+    playerId: string;
 }
-const Home: React.FC<HomeProps> = ({ onBack, ws, message, host }) => {
+const Home: React.FC<HomeProps> = ({ onBack, ws, message, host, playerId }) => {
     return (
         <div>
             <Button
@@ -20,7 +21,12 @@ const Home: React.FC<HomeProps> = ({ onBack, ws, message, host }) => {
             >
                 <ChevronLeft />
             </Button>
-            <TriviaGame ws={ws} message={message} host={host} />
+            <TriviaGame
+                ws={ws}
+                message={message}
+                host={host}
+                playerId={playerId}
+            />
         </div>
     );
 };

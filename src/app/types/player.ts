@@ -4,4 +4,5 @@ export type Player = {
     answers: Record<number, string>;
     score: number;
     isHost: boolean;
+    recentScore: number;
 };

@@ -3,7 +3,9 @@ import backgroundImage from "src/lib/test3.jpg";
 
 import "./App.css";
 
+import { v4 as uuidv4 } from "uuid";
 import Home from "./app/home/home";
+import { Player } from "./app/types/player";
 import { GenerateGame } from "./components/loading/generate-game";
 import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
@@ -26,11 +28,11 @@ function App() {
     const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
     // WebSocket
     const [ws, setWs] = useState<WebSocket | null>(null);
-    const [hostName, setHostName] = useState("");
-    const [gameState, setGameState] = useState<any>(null);
+    const [gameId, setgameId] = useState<string>("");
     const [players, setPlayers] = useState<string[]>([]);
     const [host, setHost] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
+    const [playerId, setplayerId] = useState<string>("");
 
     const hasRun = useRef(false); // Declare outside useEffect
 
@@ -56,7 +58,7 @@ function App() {
 
             console.log("Received:", data);
             if (data.type === "playerJoined") {
-                setPlayers((prev) => [...prev, data.player.name]);
+                setPlayers(data.players.map((x: Player) => x.name));
                 console.log(players);
             }
             if (data.type === "startGame") {
@@ -64,7 +66,11 @@ function App() {
             }
             if (data.type === "gameCreated") {
                 setPlayers((prev) => [...prev, data.hostName]);
+                setgameId(data.gameId);
                 console.log(players);
+            }
+            if (data.type === "gameOver") {
+                setStep("choice");
             }
         };
     };
@@ -83,9 +89,12 @@ function App() {
     const handleFormCompleteHost = (answers: any) => {
         setFormAnswers(answers);
         setHost(true);
+        let id = uuidv4();
+        setplayerId(id);
         const message = JSON.stringify({
             type: "host",
             name: answers.givenName,
+            playerId: id,
         });
         if (ws) {
             ws.send(message);
@@ -100,9 +109,13 @@ function App() {
     const handleFormCompletePlayer = (answers: any) => {
         setFormAnswers(answers);
         setHost(false);
+        let id = uuidv4();
+        setplayerId(id);
         const message = JSON.stringify({
             type: "join",
             name: answers.givenName, // TODO: replace with player name
+            gameId: answers.sessionName,
+            playerId: id,
         });
         if (ws) {
             ws.send(message);
@@ -162,13 +175,6 @@ function App() {
         }
     };
 
-    const handleRuleSelection = () => {
-        setStep("home");
-    };
-
-    const handleRuleSelectionEvent = () => {
-        setStep("ruleSelection");
-    };
     return (
         <div
             className="bg-cover bg-center min-h-screen"
@@ -202,6 +208,7 @@ function App() {
                     )}
                     {step === "waiting" && (
                         <TrivailWaitingRoom
+                            gameId={gameId}
                             host={host}
                             onBack={handleBack}
                             onComplete={handleWaitingRoomComplete}
@@ -211,6 +218,7 @@ function App() {
                     {step === "home" && (
                         <>
                             <Home
+                                playerId={playerId}
                                 host={host}
                                 answers={formAnswers}
                                 onBack={handleBack}

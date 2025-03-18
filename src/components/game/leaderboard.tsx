@@ -33,7 +33,7 @@ export default function TriviaLeaderboard({ players }: TriviaLeaderboardProps) {
                         <tr className="text-white text-lg">
                             <th className="p-2">Rank</th>
                             <th className="p-2">Player</th>
-                            <th className="p-2 text-right">Correct</th>
+                            <th className="p-2 text-right">Points</th>
                         </tr>
                     </thead>
                     <tbody>

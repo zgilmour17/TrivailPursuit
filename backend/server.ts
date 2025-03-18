@@ -84,7 +84,7 @@ wss.on("connection", async (ws, req) => {
                 return;
             }
 
-            const hostPlayer = new Player(data.name, true);
+            const hostPlayer = new Player(data.playerId, data.name, true);
             console.log(hostPlayer, data);
             games[gameId] = new Game(gameId, hostPlayer);
 
@@ -118,12 +118,22 @@ wss.on("connection", async (ws, req) => {
             if (!client) return;
             let game = games[client.gameId];
             let round = games[client.gameId].incrementRound();
-            if (round % 3 === 0) {
+            let players = game.getPlayers();
+            let randomPlayer =
+                players[Math.floor(Math.random() * players.length)];
+
+            if (round === 16) {
+                broadcast(client.gameId, {
+                    type: "gameOver",
+                    players: game.getPlayers(),
+                });
+            } else if (round % 3 === 0) {
                 broadcast(client.gameId, {
                     type: "ruleSelection",
                     rules: drinking_rules,
+                    player: randomPlayer.id,
                 });
-            } else if (round % 5 === 0) {
+            } else if (round === 5 || round === 10) {
                 broadcast(client.gameId, {
                     type: "leaderboard",
                     players: game.getPlayers(),
@@ -145,20 +155,29 @@ wss.on("connection", async (ws, req) => {
         // Handle rule selection
         if (data.type === "ruleChosen") {
             const client = clients.get(ws);
+            console.log(data);
             if (!client) return;
             games[client.gameId].addRule(data.rule);
-            broadcast(client.gameId, {
-                type: "ruleChosen",
-                rule: data.rule,
-                question:
-                    triviaQuestions[games[client.gameId].getRound()].question,
-                choices:
-                    triviaQuestions[games[client.gameId].getRound()].choices,
-            });
+            const player = games[client.gameId].getPlayer(data.player);
+            console.log(player);
+            if (player) {
+                broadcast(client.gameId, {
+                    type: "ruleChosen",
+                    rule: data.rule,
+                    player: player.name ? player?.name : "",
+                    question:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .question,
+                    choices:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .choices,
+                });
+            }
         }
 
         // Handle player answering a question
         if (data.type === "answer") {
+            console.log(data);
             const client = clients.get(ws);
             if (!client) return;
             var game = games[client.gameId];
@@ -169,6 +188,7 @@ wss.on("connection", async (ws, req) => {
             game.setAnswerForPlayer(
                 client.playerId,
                 data.answer,
+                data.time,
                 data.answer === correctAnswer
             );
 
@@ -177,22 +197,31 @@ wss.on("connection", async (ws, req) => {
             var players = game.getPlayers();
 
             players.forEach((player) => {
-                if (player.getAnswer(round) === undefined) {
+                if (player.getAnswer(round) === "No answer found") {
                     allAnswered = false;
                 }
             });
-
+            console.log("allanswered?", allAnswered);
             if (allAnswered) {
-                var idiots: string[] = [];
+                const idiots: { name: string; recentScore: number }[] = [];
+
+                // Collect names of players who answered incorrectly and also their scores
                 players.forEach((player) => {
-                    if (player.getAnswer(round) !== correctAnswer) {
-                        idiots.push(player.name);
-                    }
+                    // Push player name and recentScore to the list
+                    idiots.push({
+                        name: player.name,
+                        recentScore: player.recentScore,
+                    });
                 });
+
+                // Sort player scores in descending order by recentScore
+                idiots.sort((a, b) => b.recentScore - a.recentScore);
+
+                // Broadcast the data
                 broadcast(client.gameId, {
                     type: "roundEnd",
-                    idiots: idiots,
                     answer: correctAnswer,
+                    idiots: idiots, // Add the sorted player scores to the broadcast
                 });
             }
         }
@@ -253,7 +282,8 @@ wss.on("connection", async (ws, req) => {
         //* Player Actions
         // Handle player joining
         if (data.type === "join") {
-            const { gameId, name } = data;
+            const gameId = data.gameId;
+            const name = data.name;
             if (!games[gameId]) {
                 ws.send(
                     JSON.stringify({ type: "error", message: "Game not found" })
@@ -261,13 +291,17 @@ wss.on("connection", async (ws, req) => {
                 return;
             }
 
-            const player = new Player(name, false);
-
+            const player = new Player(data.playerId, name, false);
             games[gameId].addPlayer(player);
+            const game = games[gameId];
+            console.log(game.getPlayers());
             clients.set(ws, { gameId, playerId: player.id, isHost: false });
 
             console.log(`${player.name} joined game ${gameId}`);
-            broadcast(gameId, { type: "playerJoined", player });
+            broadcast(gameId, {
+                type: "playerJoined",
+                players: game.getPlayers(),
+            });
         }
     });
 

@@ -7,6 +7,7 @@ interface WaitingRoomProps {
     onBack: () => void; // Add the back handler
     host: boolean;
     players: string[];
+    gameId: string;
 }
 
 const getRandomColor = () => {
@@ -18,18 +19,17 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
     onBack,
     players,
     host,
+    gameId,
 }) => {
     const handleStart = async () => {
         onComplete();
     };
-    const gamePin = "123456"; // Replace with dynamic PIN if needed
+    // const [gameId, setgameId] = useState<string>("");
     const [styles, setStyles] = useState<
         Record<string, { rotation: number; color: string }>
     >({});
 
     useEffect(() => {
-        console.log("PLAYER ADDED!!!");
-        console.log(players);
         setStyles((prevStyles) => {
             const newStyles = { ...prevStyles };
             players.forEach((player) => {
@@ -45,23 +45,6 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
             return newStyles;
         });
     }, [players]);
-    // TODO: remove
-    // Simulate players joining
-    // useEffect(() => {
-    // 	const fakeNames = ["Alice", "Bob", "Charlie", "David", "Eve"];
-    // 	let index = 0;
-
-    // 	const interval = setInterval(() => {
-    // 		if (index < fakeNames.length) {
-    // 			setPlayers((prev) => [...prev, fakeNames[index]]);
-    // 			index++;
-    // 		} else {
-    // 			clearInterval(interval);
-    // 		}
-    // 	}, 1000);
-
-    // 	return () => clearInterval(interval);
-    // }, []);
 
     return (
         <div className="flex flex-col items-center justify-center ">
@@ -73,8 +56,8 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
             >
                 <ChevronLeft />
             </Button>
-            <h1 className="text-4xl font-bold">Game PIN: {gamePin}</h1>
-            <p className="text-lg mt-2">Join at trivail.blahblah</p>
+            <h1 className="text-4xl font-bold">Game PIN: {gameId}</h1>
+            {/* <p className="text-lg mt-2">Join at trivail.blahblah</p> */}
 
             <div className=" text-white w-full mt-2">
                 {/* <h2 className="text-2xl font-semibold mb-3">Players Joined</h2> */}

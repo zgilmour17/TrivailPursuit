@@ -42,21 +42,24 @@ export class Game {
         return this.rules;
     }
 
-    getPlayer(playerId: string): Player {
-        return this.players[playerId];
+    getPlayer(playerId: string): Player | undefined {
+        return this.players.get(playerId);
     }
 
     // Method to set an answer for a player in the current round
     setAnswerForPlayer(
         playerId: string,
         answer: string,
+        time: number,
         correct: boolean
     ): void {
         const player = this.players.get(playerId); // Fetch player
         if (player) {
             player.answers[this.roundNumber] = answer;
             if (correct) {
-                player.incrementScore();
+                player.incrementScore(time);
+            } else {
+                player.setRecentScore(0);
             }
         } else {
             console.error(`Player with ID ${playerId} not found.`);
