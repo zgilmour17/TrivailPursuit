@@ -60,6 +60,8 @@ const TriviaGame: React.FC<TriviaGameProps> = ({
             setShowLeaderboard(false);
             setLoading(false);
             setStopTimer(false);
+            setCorrectAnswer(null);
+            setQuestion(null);
         };
 
         switch (data.type) {
@@ -67,11 +69,13 @@ const TriviaGame: React.FC<TriviaGameProps> = ({
                 setCorrectAnswer(data.answer);
                 setLoading(false);
                 setLosers(data.idiots || []); // Store the losers when the round ends
-
+                setIsAnswered(true);
                 // Delay showing the SipList for 5 seconds
-
-                setShowLosers(true);
-                setAllowBegin(true);
+                console.log(loading);
+                setTimeout(() => {
+                    setShowLosers(true);
+                    setAllowBegin(true);
+                }, 3000);
 
                 break;
 
@@ -81,6 +85,7 @@ const TriviaGame: React.FC<TriviaGameProps> = ({
                     setRuleSelection(true);
                     setRules(data.rules);
                 } else {
+                    console.log("should be loading rn");
                     setLoading(true);
                 }
                 break;
@@ -130,6 +135,7 @@ const TriviaGame: React.FC<TriviaGameProps> = ({
 
         setSelectedAnswer(answer);
         setStopTimer(true);
+        setLoading(true);
     };
 
     const startRound = () => {
@@ -188,8 +194,6 @@ const TriviaGame: React.FC<TriviaGameProps> = ({
                         )
                     }
                 />
-            ) : loading ? (
-                <WaitingForUser />
             ) : question ? (
                 <div className="mb-6 space-y-4">
                     <Timer
@@ -206,8 +210,8 @@ const TriviaGame: React.FC<TriviaGameProps> = ({
                         isAnswered={isAnswered}
                     />
                 </div>
-            ) : !host ? (
-                <p>Waiting for host to start...</p>
+            ) : loading ? (
+                <WaitingForUser />
             ) : null}
 
             <div>

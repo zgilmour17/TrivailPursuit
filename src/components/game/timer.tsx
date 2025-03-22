@@ -7,7 +7,7 @@ interface TimerProps {
 }
 
 const Timer: React.FC<TimerProps> = ({ onTimeUp, stopTimer = false }) => {
-    const TIMER_DURATION = 5000; // 5 seconds
+    const TIMER_DURATION = 10000; // 5 seconds
     const UPDATE_INTERVAL = 100; // Update every 100ms for smoother progress
 
     const [progress, setProgress] = useState(100);

@@ -24,7 +24,7 @@ const TriviaOptions: React.FC<TriviaOptionsProps> = ({
                     onClick={() => onAnswerClick(answer)}
                     className={`mb-2 w-full rounded-md text-white
             ${
-                isAnswered
+                isAnswered && correctAnswer !== null
                     ? answer === correctAnswer
                         ? "!bg-green-500 animate-bounce "
                         : "!bg-red-500 "
@@ -40,6 +40,7 @@ const TriviaOptions: React.FC<TriviaOptionsProps> = ({
                 >
                     {answer}
                     {isAnswered &&
+                        correctAnswer !== null &&
                         (answer === correctAnswer ? (
                             <span className="text-white">&#10003;</span>
                         ) : answer === selectedAnswer ? (

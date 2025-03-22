@@ -6,6 +6,7 @@ export class Game {
     private players: Map<string, Player> = new Map<string, Player>(); // You can change `string[]` to a more detailed Player type if necessary
     private roundNumber: number = 0;
     private rules: Rule[] = [];
+    private topics: string[] = [];
     constructor(gameId: string, hostPlayer: Player) {
         this.id = gameId;
         this.players = this.players.set(hostPlayer.id, hostPlayer); // Initialize with the host player
@@ -16,10 +17,17 @@ export class Game {
         this.players.set(player.id, player);
     }
 
-    //
     removePlayer(player: Player): void {
         this.players.delete(player.id);
     }
+    addTopic(topic: string): void {
+        this.topics.push(topic);
+    }
+
+    getTopics(): string[] {
+        return this.topics;
+    }
+
     // Method to start a new round
     incrementRound(): number {
         this.roundNumber += 1;

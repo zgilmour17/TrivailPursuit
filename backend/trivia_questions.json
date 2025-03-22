@@ -1,152 +1,162 @@
 [
   {
-    "question": "Which League of Legends champion is known as the Card Master?",
+    "question": "What is the primary ingredient in white chocolate?",
     "choices": [
-      "Twisted Fate",
-      "Jinx",
-      "Katarina",
-      "Shaco"
+      "Cocoa solids",
+      "Cocoa butter",
+      "Sugar",
+      "Milk"
     ],
-    "answer": "Twisted Fate"
+    "answer": "Cocoa butter"
   },
   {
-    "question": "Which item provides ability power and mana in League of Legends?",
+    "question": "Which civilization first domesticated the cacao tree?",
     "choices": [
-      " Mejai's Soulstealer",
-      "Rabadon's Deathcap",
-      "Sorcery Shoes",
-      "Void Staff"
+      "Aztecs",
+      "Mayans",
+      "Olmec",
+      "Inca"
     ],
-    "answer": " Mejai's Soulstealer"
+    "answer": "Olmec"
   },
   {
-    "question": "Who is the all-time leading scorer in the Premier League?",
+    "question": "Which country consumes the most chocolate per capita?",
     "choices": [
-      "Alan Shearer",
-      "Wayne Rooney",
-      "Andy Cole",
-      "Thierry Henry"
+      "Switzerland",
+      "Belgium",
+      "United States",
+      "Germany"
     ],
-    "answer": "Alan Shearer"
+    "answer": "Switzerland"
   },
   {
-    "question": "Which soccer player has won the most Ballon d'Or awards?",
+    "question": "What is the name of the process that gives chocolate its taste and aroma?",
     "choices": [
-      "Lionel Messi",
-      "Cristiano Ronaldo",
-      "Zinedine Zidane",
-      "Johan Cruyff"
+      "Tempering",
+      "Conching",
+      "Roasting",
+      "Fermenting"
     ],
-    "answer": "Lionel Messi"
+    "answer": "Conching"
   },
   {
-    "question": "What is the name of the new economy system in CS2?",
+    "question": "What is the name of the popular chocolate bar with a nougat center?",
     "choices": [
-      "Round-based Economy",
-      "Match-based Economy",
-      "Skill-based Economy",
-      "Time-based Economy"
+      "Snickers",
+      "Mars bar",
+      "KitKat",
+      "Toblerone"
     ],
-    "answer": "Round-based Economy"
+    "answer": "Mars bar"
   },
   {
-    "question": "Which team has won the most FIFA World Cup titles?",
+    "question": "What is the name of the process that gives chocolate a smooth texture?",
+    "choices": [
+      "Tempering",
+      "Conching",
+      "Refining",
+      "Grinding"
+    ],
+    "answer": "Conching"
+  },
+  {
+    "question": "Which company introduced the first milk chocolate bar?",
+    "choices": [
+      "Cadbury",
+      "Nestlé",
+      "Hershey's",
+      "Lindt"
+    ],
+    "answer": "Nestlé"
+  },
+  {
+    "question": "What is the name of the smallest particle in chocolate?",
+    "choices": [
+      "Cocoa nib",
+      "Sugar crystal",
+      "Milk particle",
+      "Cacao particle"
+    ],
+    "answer": "Cocoa nib"
+  },
+  {
+    "question": "Which of the following is NOT a type of chocolate?",
+    "choices": [
+      "Dark",
+      "Milk",
+      "White",
+      "Sour"
+    ],
+    "answer": "Sour"
+  },
+  {
+    "question": "What is the name of the popular chocolate-hazelnut spread?",
+    "choices": [
+      "Nutella",
+      "ChocoSpread",
+      "Hazelo",
+      "Nuti"
+    ],
+    "answer": "Nutella"
+  },
+  {
+    "question": "What is the main fat present in chocolate?",
+    "choices": [
+      "Cocoa butter",
+      "Coconut oil",
+      "Palm oil",
+      "Shea butter"
+    ],
+    "answer": "Cocoa butter"
+  },
+  {
+    "question": "Which of the following is a health benefit of dark chocolate?",
+    "choices": [
+      "High in caffeine",
+      "Low in antioxidants",
+      "High in sugar",
+      "Good for heart health"
+    ],
+    "answer": "Good for heart health"
+  },
+  {
+    "question": "What is the name of the process where chocolate is heated and cooled to set its texture?",
+    "choices": [
+      "Tempering",
+      "Conching",
+      "Aging",
+      "Curing"
+    ],
+    "answer": "Tempering"
+  },
+  {
+    "question": "Which country is the largest producer of cacao beans?",
     "choices": [
       "Brazil",
-      "Germany",
-      "Italy",
-      "Argentina"
+      "Indonesia",
+      "Ivory Coast",
+      "Ghana"
     ],
-    "answer": "Brazil"
+    "answer": "Ivory Coast"
   },
   {
-    "question": "Which champion is known for using bombs in League of Legends?",
+    "question": "What is the name of the popular chocolate sant made by Hershey's?",
     "choices": [
-      "Jinx",
-      "Tristana",
-      "Corki",
-      "Lulu"
+      "Kisses",
+      "Hugs",
+      "Reese's",
+      "Almond Joy"
     ],
-    "answer": "Jinx"
+    "answer": "Kisses"
   },
   {
-    "question": "Which CS2 feature introduces realistic bullet penetration?",
+    "question": "What is the name of the chocolate bar with a crunchy wafer interior?",
     "choices": [
-      "Advanced Ballistics",
-      "Recoil Dynamics",
-      "Weapon Handling",
-      "Damage Modifiers"
+      "KitKat",
+      "Twix",
+      "Snickers",
+      "Toblerone"
     ],
-    "answer": "Advanced Ballistics"
-  },
-  {
-    "question": "Who is the founder of the UEFA Champions League?",
-    "choices": [
-      "Michel Platini",
-      "Lennart Johansson",
-      "Gianni Infantino",
-      "Sepp Blatter"
-    ],
-    "answer": "Lennart Johansson"
-  },
-  {
-    "question": "What is the name of the new map in CS2?",
-    "choices": [
-      "Dust II",
-      "Inferno",
-      "Overpass",
-      "Haven"
-    ],
-    "answer": "Haven"
-  },
-  {
-    "question": "In soccer, what is the term for a goal scored from a direct free-kick?",
-    "choices": [
-      "Direct Goal",
-      "Free-kick Goal",
-      "Own Goal",
-      "Assist"
-    ],
-    "answer": "Free-kick Goal"
-  },
-  {
-    "question": "Which League of Legends champion is known as the King of the Void?",
-    "choices": [
-      "Kha'Zix",
-      "Rek'Sai",
-      "Voidbringer",
-      "Cho'Gath"
-    ],
-    "answer": "Kha'Zix"
-  },
-  {
-    "question": "What is the new game mode in CS2?",
-    "choices": [
-      "Recoil Master",
-      "Recoil Mode",
-      "Classic Mode",
-      "Recoil Challenge"
-    ],
-    "answer": "Recoil Mode"
-  },
-  {
-    "question": "Which soccer player is known for his dribbling skills?",
-    "choices": [
-      "Lionel Messi",
-      "Cristiano Ronaldo",
-      "Neymar Jr.",
-      "Kylian Mbappé"
-    ],
-    "answer": "Lionel Messi"
-  },
-  {
-    "question": "What is the name of the new ranking system in CS2?",
-    "choices": [
-      "Skill Groups",
-      "Rank Distribution",
-      "Skill Levels",
-      "Matchmaking Tiers"
-    ],
-    "answer": "Skill Groups"
+    "answer": "KitKat"
   }
 ]

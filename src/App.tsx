@@ -11,6 +11,7 @@ import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
 import { SessionJoinForm } from "./components/session/session-join";
 import { TrivailWaitingRoom } from "./components/session/waitingroom";
+import { generateRules, generateSessionQuestions } from "./lib/api-service";
 
 function App() {
     const [step, setStep] = useState<
@@ -26,6 +27,9 @@ function App() {
         null
     ); // Track the session type (host or join)
     const loadingAudioRef = useRef<HTMLAudioElement | null>(null); // For the loading music
+    const loadingAudioRef2 = useRef<HTMLAudioElement | null>(null); // For the loading music
+    const loadingAudioRef3 = useRef<HTMLAudioElement | null>(null); // For the loading music
+
     // WebSocket
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [gameId, setgameId] = useState<string>("");
@@ -33,6 +37,7 @@ function App() {
     const [host, setHost] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
     const [playerId, setplayerId] = useState<string>("");
+    const [topics, setTopics] = useState<string[]>([""]);
 
     const hasRun = useRef(false); // Declare outside useEffect
 
@@ -59,6 +64,7 @@ function App() {
             console.log("Received:", data);
             if (data.type === "playerJoined") {
                 setPlayers(data.players.map((x: Player) => x.name));
+                setTopics(data.topics);
                 console.log(players);
             }
             if (data.type === "startGame") {
@@ -66,6 +72,7 @@ function App() {
             }
             if (data.type === "gameCreated") {
                 setPlayers((prev) => [...prev, data.hostName]);
+                setTopics(data.topics);
                 setgameId(data.gameId);
                 console.log(players);
             }
@@ -95,6 +102,7 @@ function App() {
             type: "host",
             name: answers.givenName,
             playerId: id,
+            topic: answers.topic,
         });
         if (ws) {
             ws.send(message);
@@ -113,9 +121,10 @@ function App() {
         setplayerId(id);
         const message = JSON.stringify({
             type: "join",
-            name: answers.givenName, // TODO: replace with player name
+            name: answers.givenName,
             gameId: answers.sessionName,
             playerId: id,
+            topic: answers.topic,
         });
         if (ws) {
             ws.send(message);
@@ -133,34 +142,49 @@ function App() {
 
     const handleWaitingRoomComplete = async () => {
         setStep("GenerateGame");
+        const audioRefs = [loadingAudioRef, loadingAudioRef2, loadingAudioRef3];
+
         try {
-            // // Generate trivia questions
-            // const res = await generateSessionQuestions(
-            //     ["league of legends", "soccer", "cs2"],
-            //     15
-            // );
-            // const rulesres = await generateRules(20);
-            // //! Send trivia questions to save to jsonfile in backend
-            // await fetch("http://localhost:4000/write-trivia-questions", {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify({ questions: res }),
-            // });
+            // Generate trivia questions
+            // Pick a random audio ref
+            const randomIndex = Math.floor(Math.random() * audioRefs.length);
+            const selectedAudio = audioRefs[randomIndex].current;
 
-            // //! Send rules to save to jsonfile in backend
-            // await fetch("http://localhost:4000/write-rules", {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify({ rules: rulesres }),
-            // });
+            if (selectedAudio) {
+                console.log(`Playing audio: ${randomIndex + 1}`);
+                await new Promise((resolve, reject) => {
+                    selectedAudio.play().then(resolve).catch(reject);
+                    selectedAudio.onended = resolve;
+                });
+            }
 
-            // console.log(
-            //     "Trivia questions written to lib/trivia_questions.json"
-            // );
+            console.log("generating with topics:", topics);
+            const res = await generateSessionQuestions(topics, 15);
+            const rulesres = await generateRules(20);
+            //! Send trivia questions to save to jsonfile in backend
+            await fetch(
+                `${process.env.REACT_APP_APIURL}/write-trivia-questions`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ questions: res }),
+                }
+            );
+
+            //! Send rules to save to jsonfile in backend
+            await fetch(`${process.env.REACT_APP_APIURL}/write-rules`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ rules: rulesres }),
+            });
+
+            console.log(
+                "Trivia questions written to lib/trivia_questions.json"
+            );
             if (ws) {
                 console.log("Starting game");
                 ws.send(
@@ -180,7 +204,9 @@ function App() {
             className="bg-cover bg-center min-h-screen"
             style={{ backgroundImage: `url(${backgroundImage}` }}
         >
-            <audio ref={loadingAudioRef} src="/audio/dontbea.mp3" />
+            <audio ref={loadingAudioRef} src="/audio/dontbea20.mp3" />
+            <audio ref={loadingAudioRef2} src="/audio/loadingmusic.mp3" />
+            <audio ref={loadingAudioRef3} src="/audio/triviamagnolia.mp3" />
 
             <div className="h-screen w-full flex items-center justify-center absolute z-[0]">
                 <div className="mx-auto px-16 pb-8 bg-black my-auto flex justify-center text-white shadow-lg rounded-lg max-w-[50vw] max-md:max-w-[90%] flex-col relative card min-w-[25vw]">

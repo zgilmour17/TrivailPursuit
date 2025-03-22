@@ -1,82 +1,82 @@
 [
   {
-    "title": "Wrong Answer",
-    "description": "If you answer incorrectly, take a shot."
+    "title": "Wrong Turn",
+    "description": "If you answer incorrectly, take a 3-sip penalty."
   },
   {
-    "title": "Correct Answer",
-    "description": "If you answer correctly, everyone else takes a shot."
+    "title": "Speed Sipper",
+    "description": "The player who answers last takes an extra 2 sips."
   },
   {
-    "title": "First to Answer",
-    "description": "The first player to answer correctly gets to assign a shot to another player."
+    "title": "Correct Sip",
+    "description": "Everyone who got it right sips once to celebrate."
   },
   {
-    "title": "Slow Starter",
-    "description": "If you are the last to answer, take two shots."
+    "title": "Double Trouble",
+    "description": "If two players answer wrong, each takes 2 sips."
   },
   {
-    "title": " Majority Vote",
-    "description": "If most players answer incorrectly, everyone takes a shot."
+    "title": "Blind Guess",
+    "description": "Players who answer without reading the question take 3 sips."
   },
   {
-    "title": "Host's Choice",
-    "description": "The host assigns a shot to any player after each round."
+    "title": "First Mistake",
+    "description": "The first person who answers wrong takes a 4-sip penalty."
+  },
+  {
+    "title": "Fastest Correct",
+    "description": "The fastest correct answer makes everyone else sip once."
+  },
+  {
+    "title": "Unanimous Sip",
+    "description": "If everyone answers correctly, everyone takes a sip."
+  },
+  {
+    "title": "Triangle Trouble",
+    "description": "Players who answer the same as the host take 2 sips."
+  },
+  {
+    "title": "Jump The Gun",
+    "description": "Players who answer before the question ends take 2 sips."
+  },
+  {
+    "title": "Half Right",
+    "description": "Players who change their answer take 1 sip."
+  },
+  {
+    "title": "Silent Sipper",
+    "description": "Players must stay silent; speaking players take a sip."
+  },
+  {
+    "title": "Truth or Drink",
+    "description": "Players who answer truthfully take 1 sip."
   },
   {
     "title": "Round Robin",
-    "description": "Each player takes a shot in order after each round."
+    "description": "Players take turns sipping in order after a round."
   },
   {
-    "title": "Double or Nothing",
-    "description": "If you answer correctly after a wrong answer, skip your next shot."
+    "title": "Second Chance",
+    "description": "Players who correct their answer take 2 sips."
   },
   {
-    "title": "Lag Penalty",
-    "description": "If your answer takes longer than 10 seconds, take an extra shot."
+    "title": "Sip surreal",
+    "description": "Players who answer absurdly take 1 sip."
   },
   {
-    "title": "Steal the Shot",
-    "description": "If you answer correctly, you can pass your shot to another player."
+    "title": "Echo Sipper",
+    "description": "Players who repeat others' answers take 1 sip."
   },
   {
-    "title": "Chain Reaction",
-    "description": "If three players answer incorrectly in a row, everyone takes a shot."
+    "title": "Overthinker",
+    "description": "Players who overanalyze take 2 sips."
   },
   {
-    "title": "Sore Winner",
-    "description": "If you answer correctly and mock another player, take a shot."
+    "title": "Lone Wolf",
+    "description": "Players in the minority take 3 sips."
   },
   {
-    "title": "Wrong Streak",
-    "description": "If you get three wrong answers in a row, take three shots."
-  },
-  {
-    "title": "Lucky Guess",
-    "description": "If you guess correctly without knowing the answer, take a shot."
-  },
-  {
-    "title": "Debunker",
-    "description": "If you correct the host's mistake, the host takes a shot."
-  },
-  {
-    "title": "Speedster",
-    "description": "If you answer first and correctly, everyone else takes a shot."
-  },
-  {
-    "title": "Blindside",
-    "description": "If you answer incorrectly and no one else does, take two shots."
-  },
-  {
-    "title": "Group Punishment",
-    "description": "If everyone answers incorrectly, everyone takes a shot."
-  },
-  {
-    "title": "Leaderboard Shame",
-    "description": "The player with the most wrong answers takes a shot."
-  },
-  {
-    "title": "Host's Fault",
-    "description": "If the host makes a mistake in the question, the host takes a shot."
+    "title": "Gracious Sip",
+    "description": "Winners of the round take 1 sip."
   }
 ]

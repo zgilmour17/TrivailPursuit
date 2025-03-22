@@ -6,6 +6,8 @@ interface SipListProps {
 
 export default function SipList({ losers }: SipListProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const videoRef2 = useRef<HTMLVideoElement>(null);
+
     const neonColors = [
         "text-neon-blue",
         "text-neon-pink",
@@ -17,7 +19,7 @@ export default function SipList({ losers }: SipListProps) {
         <div className="flex flex-col items-center relative overflow-hidden">
             {/* Left Video (Starting from the center) */}
             <video
-                className="scale-x-[-1] absolute left-1/2 top-1/2 animate-exitLeft z-40"
+                className="scale-x-[-1] absolute left-1/2 top-1/2 translate-x-[-100%] translate-y-[-50%] animate-exitLeft z-40"
                 autoPlay
                 muted
                 playsInline
@@ -27,11 +29,11 @@ export default function SipList({ losers }: SipListProps) {
 
             {/* Right Video (Starting from the center) */}
             <video
-                className="absolute right-1/2 top-1/2 animate-exitRight z-40"
+                className="absolute right-1/2 top-1/2 translate-x-[100%] translate-y-[-50%] animate-exitRight z-40"
                 autoPlay
                 muted
                 playsInline
-                ref={videoRef}
+                ref={videoRef2}
                 src="/beeranimation.mp4"
             />
             <div className="w-full animate-fadeinslow text-center">

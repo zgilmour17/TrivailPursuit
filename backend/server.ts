@@ -8,8 +8,6 @@ import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import { Game } from "./classes/game";
 import { Player } from "./classes/player";
-import drinking_rules from "./drinking_rules.json"; // Adjust the path as needed
-import triviaQuestions from "./trivia_questions.json"; // Adjust the path as needed
 
 // setup .env
 dotenv.config();
@@ -27,6 +25,26 @@ const sessionMiddleware = session({
     cookie: { secure: false, maxAge: 1000 * 60 * 60 }, // 1-hour session
 });
 
+const getDrinkingRules = () => {
+    try {
+        const data = fs.readFileSync("./drinking_rules.json", "utf8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading drinking_rules.json:", error);
+        return [];
+    }
+};
+
+const getTriviaQuestions = () => {
+    try {
+        const data = fs.readFileSync("./trivia_questions.json", "utf8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading trivia_questions.json:", error);
+        return [];
+    }
+};
+
 const app = express();
 app.use(cookieParser());
 app.use(sessionMiddleware); // Apply session middleware
@@ -35,7 +53,7 @@ app.use(express.json()); // Still needed for REST API requests
 // Enable CORS for all domains (you can specify the domain in the origin if you want)
 app.use(
     cors({
-        origin: "http://localhost:3000", // Allow React app (or modify for your frontend URL)
+        origin: `${process.env.FRONTENDURL}`, // Allow specific frontend URL
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type"],
     })
@@ -87,6 +105,7 @@ wss.on("connection", async (ws, req) => {
             const hostPlayer = new Player(data.playerId, data.name, true);
             console.log(hostPlayer, data);
             games[gameId] = new Game(gameId, hostPlayer);
+            games[gameId].addTopic(data.topic);
 
             clients.set(ws, { gameId, playerId: hostPlayer.id, isHost: true });
 
@@ -96,6 +115,7 @@ wss.on("connection", async (ws, req) => {
                     type: "gameCreated",
                     gameId,
                     hostName: hostPlayer.name,
+                    topics: games[gameId].getTopics(),
                 })
             );
         }
@@ -127,10 +147,11 @@ wss.on("connection", async (ws, req) => {
                     type: "gameOver",
                     players: game.getPlayers(),
                 });
-            } else if (round % 3 === 0) {
+            } else if (round % 3 === 0 && round !== 15) {
+                const drinkingRules = getDrinkingRules();
                 broadcast(client.gameId, {
                     type: "ruleSelection",
-                    rules: drinking_rules,
+                    rules: drinkingRules,
                     player: randomPlayer.id,
                 });
             } else if (round === 5 || round === 10) {
@@ -139,7 +160,7 @@ wss.on("connection", async (ws, req) => {
                     players: game.getPlayers(),
                 });
             } else {
-                // console.log(`${client.player.name} started the round.`);
+                const triviaQuestions = getTriviaQuestions();
                 broadcast(client.gameId, {
                     type: "startRound",
                     question:
@@ -161,6 +182,7 @@ wss.on("connection", async (ws, req) => {
             const player = games[client.gameId].getPlayer(data.player);
             console.log(player);
             if (player) {
+                const triviaQuestions = getTriviaQuestions();
                 broadcast(client.gameId, {
                     type: "ruleChosen",
                     rule: data.rule,
@@ -182,6 +204,7 @@ wss.on("connection", async (ws, req) => {
             if (!client) return;
             var game = games[client.gameId];
             let round = game.getRound();
+            const triviaQuestions = getTriviaQuestions();
             var correctAnswer = triviaQuestions[round].answer;
 
             //Set Answer for player
@@ -284,6 +307,7 @@ wss.on("connection", async (ws, req) => {
         if (data.type === "join") {
             const gameId = data.gameId;
             const name = data.name;
+            const topic = data.topic;
             if (!games[gameId]) {
                 ws.send(
                     JSON.stringify({ type: "error", message: "Game not found" })
@@ -293,6 +317,7 @@ wss.on("connection", async (ws, req) => {
 
             const player = new Player(data.playerId, name, false);
             games[gameId].addPlayer(player);
+            games[gameId].addTopic(topic);
             const game = games[gameId];
             console.log(game.getPlayers());
             clients.set(ws, { gameId, playerId: player.id, isHost: false });
@@ -301,6 +326,7 @@ wss.on("connection", async (ws, req) => {
             broadcast(gameId, {
                 type: "playerJoined",
                 players: game.getPlayers(),
+                topics: games[gameId].getTopics(),
             });
         }
     });
@@ -402,7 +428,7 @@ app.post("/generate-questions", async (req, res) => {
     const { topics, amount } = req.body;
     if (!topics) return res.status(400).json({ error: "Topic is required" });
     console.log(topics, amount);
-    const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics}. 
+    const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics} rotating between topics in a random order
 	For each question generated choose a single topic from that list.
   Give 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each.
   Respond in JSON list format:
@@ -437,8 +463,8 @@ app.post("/generate-rules", async (req, res) => {
     console.log(amount);
     const promptTemplate = `respond with ${amount} drinking rules for a trivia game where players are 
 	playing concurrently and the host begins each round for all players where a timer starts and you must choose between 4 choices. 
-	It is played on the user's phone and each round shows who got it right or wrong. respond with a json list with each object formatted like the one below. 
-	Please make the punishment be sip amounts.
+	It is played on the user's phone and each round shows who got it right or wrong along with the order of the answers. respond with a json list with each object formatted like the one below. 
+	Make the punishment be sip amounts. You are allowed to include rules that can punish people that choose the correct answer.
 	{
 	"title": "<TITLE>",
 	"description": "<DESCRIPTION",
