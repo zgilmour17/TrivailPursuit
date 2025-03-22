@@ -1,11 +1,13 @@
-import { parse } from "cookie";
 import cookieParser from "cookie-parser";
-import cors from "cors"; // <-- Add cors
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import session from "express-session";
+import fs from "fs";
 import http from "http";
-import { WebSocketServer } from "ws";
+import WebSocket, { WebSocketServer } from "ws";
+import { Game } from "./classes/game";
+import { Player } from "./classes/player";
 
 // setup .env
 dotenv.config();
@@ -23,6 +25,26 @@ const sessionMiddleware = session({
     cookie: { secure: false, maxAge: 1000 * 60 * 60 }, // 1-hour session
 });
 
+const getDrinkingRules = () => {
+    try {
+        const data = fs.readFileSync("./drinking_rules.json", "utf8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading drinking_rules.json:", error);
+        return [];
+    }
+};
+
+const getTriviaQuestions = () => {
+    try {
+        const data = fs.readFileSync("./trivia_questions.json", "utf8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading trivia_questions.json:", error);
+        return [];
+    }
+};
+
 const app = express();
 app.use(cookieParser());
 app.use(sessionMiddleware); // Apply session middleware
@@ -31,7 +53,7 @@ app.use(express.json()); // Still needed for REST API requests
 // Enable CORS for all domains (you can specify the domain in the origin if you want)
 app.use(
     cors({
-        origin: "http://localhost:3000", // Allow React app (or modify for your frontend URL)
+        origin: `${process.env.FRONTENDURL}`, // Allow specific frontend URL
         methods: ["GET", "POST"],
         allowedHeaders: ["Content-Type"],
     })
@@ -42,77 +64,302 @@ const server = http.createServer(app); // Create HTTP server for WebSocket
 // Create WebSocket server and integrate with Express sessions
 const wss = new WebSocketServer({ server });
 
-const clients = new Map(); // Track connected players
+// Store game state in memory
+const games: Record<string, Game> = {};
 
-// Function to use Express sessions inside WebSockets
-const getSession = (
-    req: any
-): Promise<
-    session.Session & {
-        game?: { id: number; players: { id: number; name: string }[] };
+const clients = new Map<
+    WebSocket,
+    {
+        gameId: string;
+        playerId: string;
+        isHost: boolean;
     }
-> => {
-    return new Promise((resolve) => {
-        sessionMiddleware(req, {} as any, () => {
-            resolve(
-                req.session as session.Session & {
-                    game?: {
-                        id: number;
-                        players: { id: number; name: string }[];
-                    };
-                }
-            );
-        });
-    });
-};
+>();
 
+// TODO: dupe player names
+// TODO: test when host immediately joins after hosting
 // WebSocket connection handling
 wss.on("connection", async (ws, req) => {
-    const cookies = parse(req.headers.cookie || "");
-    const sessionId = cookies["connect.sid"];
-    const session = await getSession(req);
-
-    // Ensure a game session exists
-    if (!sessionId) {
-        ws.send(JSON.stringify({ type: "error", message: "No session found" }));
-        ws.close();
-        return;
-    }
-
-    session.game = session.game || { id: Date.now(), players: [] };
-
-    // Add a new player
-    const player = {
-        id: Date.now(),
-        name: `Player${session.game.players.length + 1}`,
-    };
-    session.game.players.push(player);
-
-    // Save session
-    session.save();
-
-    clients.set(ws, { session, player });
-
-    console.log(`${player.name} joined the game!`);
-    broadcast({ type: "playerJoined", player });
-
     ws.on("message", (message) => {
         const data = JSON.parse(message.toString());
+        console.log("Message received", data);
+
+        //* Host Actions
+
+        // Handle host creating a session (and also joining as a player)
+
+        // Handle host creating a session
+        if (data.type === "host") {
+            const gameId = Math.random().toString(36).substring(2, 6); // Generates a random 4-character string
+            console.log("got host", data);
+            if (games[gameId]) {
+                ws.send(
+                    JSON.stringify({
+                        type: "error",
+                        message: "A host already exists for this game",
+                    })
+                );
+                return;
+            }
+
+            const hostPlayer = new Player(data.playerId, data.name, true);
+            console.log(hostPlayer, data);
+            games[gameId] = new Game(gameId, hostPlayer);
+            games[gameId].addTopic(data.topic);
+
+            clients.set(ws, { gameId, playerId: hostPlayer.id, isHost: true });
+
+            console.log(`Game ${gameId} started by host "${hostPlayer.name}"`);
+            ws.send(
+                JSON.stringify({
+                    type: "gameCreated",
+                    gameId,
+                    hostName: hostPlayer.name,
+                    topics: games[gameId].getTopics(),
+                })
+            );
+        }
+
+        // Handle host starting game
+        if (data.type === "startGame") {
+            const client = clients.get(ws);
+            if (!client) return;
+
+            // console.log(`${client.player.name} started the game.`);
+            broadcast(client.gameId, {
+                type: "startGame",
+            });
+        }
+
+        // Handle host starting round
+        if (data.type === "startRound") {
+            const client = clients.get(ws);
+
+            if (!client) return;
+            let game = games[client.gameId];
+            let round = games[client.gameId].incrementRound();
+            let players = game.getPlayers();
+            let randomPlayer =
+                players[Math.floor(Math.random() * players.length)];
+
+            if (round === 16) {
+                broadcast(client.gameId, {
+                    type: "gameOver",
+                    players: game.getPlayers(),
+                });
+            } else if (round % 3 === 0 && round !== 15) {
+                const drinkingRules = getDrinkingRules();
+                broadcast(client.gameId, {
+                    type: "ruleSelection",
+                    rules: drinkingRules,
+                    player: randomPlayer.id,
+                });
+            } else if (round === 5 || round === 10) {
+                broadcast(client.gameId, {
+                    type: "leaderboard",
+                    players: game.getPlayers(),
+                });
+            } else {
+                const triviaQuestions = getTriviaQuestions();
+                broadcast(client.gameId, {
+                    type: "startRound",
+                    question:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .question,
+                    choices:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .choices,
+                });
+            }
+        }
+
+        // Handle rule selection
+        if (data.type === "ruleChosen") {
+            const client = clients.get(ws);
+            console.log(data);
+            if (!client) return;
+            games[client.gameId].addRule(data.rule);
+            const player = games[client.gameId].getPlayer(data.player);
+            console.log(player);
+            if (player) {
+                const triviaQuestions = getTriviaQuestions();
+                broadcast(client.gameId, {
+                    type: "ruleChosen",
+                    rule: data.rule,
+                    player: player.name ? player?.name : "",
+                    question:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .question,
+                    choices:
+                        triviaQuestions[games[client.gameId].getRound()]
+                            .choices,
+                });
+            }
+        }
+
+        // Handle player answering a question
         if (data.type === "answer") {
-            console.log(`${player.name} answered: ${data.answer}`);
-            broadcast({
-                type: "answerReceived",
-                player: player.name,
-                answer: data.answer,
+            console.log(data);
+            const client = clients.get(ws);
+            if (!client) return;
+            var game = games[client.gameId];
+            let round = game.getRound();
+            const triviaQuestions = getTriviaQuestions();
+            var correctAnswer = triviaQuestions[round].answer;
+
+            //Set Answer for player
+            game.setAnswerForPlayer(
+                client.playerId,
+                data.answer,
+                data.time,
+                data.answer === correctAnswer
+            );
+
+            //Find out if its the last answer for the round
+            var allAnswered = true;
+            var players = game.getPlayers();
+
+            players.forEach((player) => {
+                if (player.getAnswer(round) === "No answer found") {
+                    allAnswered = false;
+                }
+            });
+            console.log("allanswered?", allAnswered);
+            if (allAnswered) {
+                const idiots: { name: string; recentScore: number }[] = [];
+
+                // Collect names of players who answered incorrectly and also their scores
+                players.forEach((player) => {
+                    // Push player name and recentScore to the list
+                    idiots.push({
+                        name: player.name,
+                        recentScore: player.recentScore,
+                    });
+                });
+
+                // Sort player scores in descending order by recentScore
+                idiots.sort((a, b) => b.recentScore - a.recentScore);
+
+                // Broadcast the data
+                broadcast(client.gameId, {
+                    type: "roundEnd",
+                    answer: correctAnswer,
+                    idiots: idiots, // Add the sorted player scores to the broadcast
+                });
+            }
+        }
+
+        // Handle host kicking a player
+        // if (data.type === "kick") {
+        //     const client = clients.get(ws);
+        //     if (!client || !client.isHost) {
+        //         ws.send(
+        //             JSON.stringify({
+        //                 type: "error",
+        //                 message: "Unauthorized action",
+        //             })
+        //         );
+        //         return;
+        //     }
+
+        //     const playerToKick = session.game.players.find(
+        //         (p) => p.name === data.name
+        //     );
+
+        //     if (!playerToKick) {
+        //         ws.send(
+        //             JSON.stringify({
+        //                 type: "error",
+        //                 message: "Player not found",
+        //             })
+        //         );
+        //         return;
+        //     }
+
+        //     // Remove player from session
+        //     session.game.players = session.game.players.filter(
+        //         (p) => p.id !== playerToKick.id
+        //     );
+        //     session.save();
+
+        //     // Find and disconnect the kicked player
+        //     for (const [clientWs, clientInfo] of clients.entries()) {
+        //         if (clientInfo.player.id === playerToKick.id) {
+        //             clientWs.send(JSON.stringify({ type: "kicked" }));
+        //             clientWs.close();
+        //             clients.delete(clientWs);
+        //             break;
+        //         }
+        //     }
+
+        //     console.log(
+        //         `${playerToKick.name} was kicked by ${client.player.name}`
+        //     );
+        //     broadcast(client.gameId, {
+        //         type: "playerKicked",
+        //         player: playerToKick.name,
+        //         by: client.player.name,
+        //     });
+        // }
+
+        //* Player Actions
+        // Handle player joining
+        if (data.type === "join") {
+            const gameId = data.gameId;
+            const name = data.name;
+            const topic = data.topic;
+            if (!games[gameId]) {
+                ws.send(
+                    JSON.stringify({ type: "error", message: "Game not found" })
+                );
+                return;
+            }
+
+            const player = new Player(data.playerId, name, false);
+            games[gameId].addPlayer(player);
+            games[gameId].addTopic(topic);
+            const game = games[gameId];
+            console.log(game.getPlayers());
+            clients.set(ws, { gameId, playerId: player.id, isHost: false });
+
+            console.log(`${player.name} joined game ${gameId}`);
+            broadcast(gameId, {
+                type: "playerJoined",
+                players: game.getPlayers(),
+                topics: games[gameId].getTopics(),
             });
         }
     });
 
-    ws.on("close", () => {
-        console.log(`${player.name} disconnected`);
-        clients.delete(ws);
-        broadcast({ type: "playerLeft", player: player.name });
-    });
+    //TODO: Fix player disconnecting
+    ws.on("close", () => handleClientDisconnect(ws));
+
+    function handleClientDisconnect(ws) {
+        const client = clients.get(ws);
+        if (!client) return; // Ensure client exists
+
+        const game = games[client.gameId];
+        if (game) {
+            const player = game.getPlayer(client.playerId);
+            if (player) {
+                console.log(
+                    `Player ${player.name} has left game ${client.gameId}`
+                );
+                broadcast(client.gameId, {
+                    type: "playerLeft",
+                    player: player.name,
+                });
+            } else {
+                console.warn(
+                    `Player with ID ${client.playerId} not found in game ${client.gameId}`
+                );
+            }
+        } else {
+            console.warn(`Game with ID ${client.gameId} not found`);
+        }
+
+        clients.delete(ws); // Ensure client is always removed
+    }
 });
 
 async function askAI(prompt: string): Promise<string> {
@@ -141,6 +388,16 @@ async function askAI(prompt: string): Promise<string> {
 
     return data.choices[0].message.content;
 }
+
+app.post("/write-trivia-questions", (req, res) => {
+    const questions = req.body.questions;
+    fs.writeFileSync(
+        "trivia_questions.json",
+        JSON.stringify(questions, null, 2),
+        "utf8"
+    );
+    res.send({ message: "Trivia questions saved to file!" });
+});
 
 app.post("/generate-question", async (req, res) => {
     const { topic } = req.body;
@@ -171,7 +428,7 @@ app.post("/generate-questions", async (req, res) => {
     const { topics, amount } = req.body;
     if (!topics) return res.status(400).json({ error: "Topic is required" });
     console.log(topics, amount);
-    const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics}. 
+    const promptTemplate = `respond with ${amount} multiple choice trivia question related to these topics: ${topics} rotating between topics in a random order
 	For each question generated choose a single topic from that list.
   Give 4 answers for it, 3 incorrect and 1 correct. Make the answers no more than 10 words each.
   Respond in JSON list format:
@@ -186,9 +443,8 @@ app.post("/generate-questions", async (req, res) => {
         const jsonString = question
             .replace("`", "")
             .match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
-        console.log(jsonString);
         if (jsonString) {
-            res.json(JSON.parse(jsonString));
+            res.json(JSON.parse(jsonString.replace(/[\x00-\x1F\x7F]/g, "")));
         }
     } catch (error) {
         console.log(error);
@@ -200,8 +456,41 @@ app.post("/generate-rule", async (req, res) => {
     const { numRules } = req.body;
     if (!numRules)
         return res.status(400).json({ error: "numRules is required" });
+});
+app.post("/generate-rules", async (req, res) => {
+    const { amount } = req.body;
+    if (!amount) return res.status(400).json({ error: "amount is required" });
+    console.log(amount);
+    const promptTemplate = `respond with ${amount} drinking rules for a trivia game where players are 
+	playing concurrently and the host begins each round for all players where a timer starts and you must choose between 4 choices. 
+	It is played on the user's phone and each round shows who got it right or wrong along with the order of the answers. respond with a json list with each object formatted like the one below. 
+	Make the punishment be sip amounts. You are allowed to include rules that can punish people that choose the correct answer.
+	{
+	"title": "<TITLE>",
+	"description": "<DESCRIPTION",
+	}. Do not include your thoughts, only include the json list.`;
 
-    // Add your logic here for generating rules
+    try {
+        const rules = await askAI(promptTemplate);
+        const jsonString = rules
+            .replace("`", "")
+            .match(/\[\s*\{[\s\S]*?\}\s*\]/)?.[0];
+        if (jsonString) {
+            res.json(JSON.parse(jsonString.replace(/[\x00-\x1F\x7F]/g, "")));
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Failed to generate questions" });
+    }
+});
+app.post("/write-rules", (req, res) => {
+    const rules = req.body.rules;
+    fs.writeFileSync(
+        "drinking_rules.json",
+        JSON.stringify(rules, null, 2),
+        "utf8"
+    );
+    res.send({ message: "Rules saved to file!" });
 });
 
 app.post("/generate-remark", async (req, res) => {
@@ -222,10 +511,12 @@ app.post("/generate-remark", async (req, res) => {
 });
 
 // Broadcast a message to all connected players
-function broadcast(data: any) {
-    wss.clients.forEach((client) => {
-        client.send(JSON.stringify(data));
-    });
+function broadcast(gameId: string, message: any) {
+    for (const [ws, client] of clients.entries()) {
+        if (client.gameId === gameId) {
+            ws.send(JSON.stringify(message));
+        }
+    }
 }
 
 server.listen(PORT, () => {

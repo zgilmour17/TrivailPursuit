@@ -5,7 +5,11 @@ import { Button } from "../ui/button";
 interface WaitingRoomProps {
     onComplete: () => void;
     onBack: () => void; // Add the back handler
+    host: boolean;
+    players: string[];
+    gameId: string;
 }
+
 const getRandomColor = () => {
     const randomHex = () => Math.floor(Math.random() * 256);
     return `rgb(${randomHex()}, ${randomHex()}, ${randomHex()})`;
@@ -13,12 +17,14 @@ const getRandomColor = () => {
 const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
     onComplete,
     onBack,
+    players,
+    host,
+    gameId,
 }) => {
     const handleStart = async () => {
         onComplete();
     };
-    const [players, setPlayers] = useState<string[]>([]);
-    const gamePin = "123456"; // Replace with dynamic PIN if needed
+    // const [gameId, setgameId] = useState<string>("");
     const [styles, setStyles] = useState<
         Record<string, { rotation: number; color: string }>
     >({});
@@ -26,8 +32,8 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
     useEffect(() => {
         setStyles((prevStyles) => {
             const newStyles = { ...prevStyles };
-
             players.forEach((player) => {
+                console.log(player);
                 if (!(player in newStyles)) {
                     newStyles[player] = {
                         rotation: Math.random() * 20 - 10,
@@ -39,22 +45,6 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
             return newStyles;
         });
     }, [players]);
-    // Simulate players joining
-    useEffect(() => {
-        const fakeNames = ["Alice", "Bob", "Charlie", "David", "Eve"];
-        let index = 0;
-
-        const interval = setInterval(() => {
-            if (index < fakeNames.length) {
-                setPlayers((prev) => [...prev, fakeNames[index]]);
-                index++;
-            } else {
-                clearInterval(interval);
-            }
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center ">
@@ -66,15 +56,15 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
             >
                 <ChevronLeft />
             </Button>
-            <h1 className="text-4xl font-bold">Game PIN: {gamePin}</h1>
-            <p className="text-lg mt-2">Join at trivail.blahblah</p>
+            <h1 className="text-4xl font-bold">Game PIN: {gameId}</h1>
+            {/* <p className="text-lg mt-2">Join at trivail.blahblah</p> */}
 
             <div className=" text-white w-full mt-2">
                 {/* <h2 className="text-2xl font-semibold mb-3">Players Joined</h2> */}
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                    {players.map((player) => (
+                    {players.map((player, index) => (
                         <div
-                            key={player}
+                            key={index}
                             className="name animate-fadein"
                             style={{
                                 transform: `rotate(${styles[player]?.rotation}deg)`,
@@ -87,14 +77,16 @@ const TrivailWaitingRoom: React.FC<WaitingRoomProps> = ({
                 </div>
             </div>
 
-            <Button
-                className="mt-6 w-full"
-                disabled={players.length < 2}
-                onClick={handleStart}
-                variant="secondary"
-            >
-                Start Game
-            </Button>
+            {host && (
+                <Button
+                    className="mt-6 w-full"
+                    onClick={handleStart}
+                    variant="secondary"
+                >
+                    Start Game
+                </Button>
+            )}
+            {!host && <p className="mt-8">Waiting for host to start game...</p>}
         </div>
     );
 };

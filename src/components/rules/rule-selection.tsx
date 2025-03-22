@@ -1,89 +1,92 @@
-import React, { useState } from "react";
-
-import { CircleX } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { Rule } from "@/app/types/rule";
+import { useEffect, useState } from "react";
 import RuleCard from "./rule-card";
 import RulesDrawer from "./rule-drawer";
 
-const rules = [
-    {
-        title: "Thumb Master",
-        description:
-            "The 'Thumb Master' can place their thumb down at any time. The last person to do the same must drink.",
-    },
-    {
-        title: "Never Have I Ever",
-        description:
-            "Say something you've never done. Anyone who has done it must drink.",
-    },
-    {
-        title: "Rhyme Time",
-        description:
-            "Say a word, and everyone must rhyme with it. If someone fails, they drink.",
-    },
-    {
-        title: "Category",
-        description:
-            "Pick a category (e.g., fruits). Take turns naming something in that category. If someone repeats or can't think of one, they drink.",
-    },
-    {
-        title: "Movie Quotes",
-        description:
-            "Say a famous movie line. If others recognize it, they drink. If no one knows it, the person who said it drinks.",
-    },
-];
+const RuleSelection = ({
+    onComplete,
+    rules,
+    selectedRules,
+}: {
+    onComplete: (rule: Rule) => void;
+    rules: Rule[];
+    selectedRules: Rule[];
+}) => {
+    const [isMobile, setIsMobile] = useState(false);
+    const [refreshCount, setRefreshCount] = useState(3);
 
-const RuleSelection = ({ onComplete }: { onComplete: () => void }) => {
-    const [ruleIndexes, setRuleIndexes] = useState([0, 1, 2]);
-    const [refreshStates, setRefreshStates] = useState([false, false, false]);
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkScreenSize();
+        window.addEventListener("resize", checkScreenSize);
+        return () => window.removeEventListener("resize", checkScreenSize);
+    }, []);
 
-    const changeRule = (index: number) => {
-        const newRuleIndex = Math.floor(Math.random() * rules.length);
-        setRuleIndexes((prev) =>
-            prev.map((rule, i) => (i === index ? newRuleIndex : rule))
-        );
-        setRefreshStates((prev) =>
-            prev.map((state, i) => (i === index ? true : state))
-        );
+    const getRandomIndexes = (count: number): number[] => {
+        const indexes = new Set<number>();
+        while (indexes.size < count) {
+            indexes.add(Math.floor(Math.random() * rules.length));
+        }
+        return Array.from(indexes);
     };
 
-    const handleRuleSelect = (rule: string) => {
-        toast("Rule 3: blah blah has been replaced by a new rule.");
-        onComplete();
+    const [ruleIndexes, setRuleIndexes] = useState(
+        getRandomIndexes(isMobile ? 1 : 3)
+    );
+
+    const changeRule = () => {
+        if (refreshCount > 0) {
+            setRuleIndexes(getRandomIndexes(1));
+            setRefreshCount(refreshCount - 1);
+        }
+    };
+
+    const handleRuleSelect = (rule: Rule) => {
+        onComplete(rule);
     };
 
     return (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-80 p-4">
-            <span
-                className="type text-2xl font-bold mx-auto mb-8"
-                style={
-                    {
-                        "--n": 30,
-                    } as React.CSSProperties
-                }
-            >
+            <span className="type text-2xl font-bold mx-auto mb-8">
                 You've been chosen to select a rule
             </span>
             <div className="flex flex-row space-x-12 relative">
                 {ruleIndexes.map((ruleIndex, i) => (
                     <RuleCard
+                        selectedRules={selectedRules}
+                        rule={rules[ruleIndex]}
                         key={i}
                         ruleIndex={ruleIndex}
-                        onRefresh={() => changeRule(i)}
-                        isRefreshing={refreshStates[i]}
-                        onComplete={() => handleRuleSelect("")}
+                        onRefresh={
+                            isMobile && refreshCount > 0
+                                ? changeRule
+                                : undefined
+                        }
+                        isRefreshing={false}
+                        onComplete={handleRuleSelect}
                     />
                 ))}
             </div>
-            <Button
+            {isMobile && (
+                <span
+                    className={`mt-4 w-fit transition-opacity ${
+                        refreshCount === 0 ? "opacity-0" : "opacity-100"
+                    }`}
+                >
+                    {refreshCount}
+                </span>
+            )}
+
+            {/* <Button
                 className="mt-4 w-fit animate-fadein"
                 variant="secondary"
-                onClick={() => handleRuleSelect("")}
+                onClick={() => handleRuleSelect({ title: "", description: "" })}
             >
                 Pass <CircleX />
-            </Button>
-            <RulesDrawer />
+            </Button> */}
+            <RulesDrawer rules={selectedRules} />
         </div>
     );
 };

@@ -290,3 +290,37 @@
     color: white;
     text-shadow: 0 0 0.05em #fff, 0 0 0.2em #4705fe, 0 0 0.3em #4705fe;
 }
+
+.border-neon-pink {
+    border-color: #ff00ff;
+}
+
+.border-neon-blue {
+    border-color: #00ffff;
+}
+.neon-glow {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px currentColor,
+        0 0 15px currentColor;
+}
+.text-neon-green {
+    color: #39ff14;
+}
+.text-neon-blue {
+    color: #00eaff;
+}
+.text-neon-pink {
+    color: #ff00ff;
+}
+.text-neon-yellow {
+    color: #ffff00;
+}
+.text-neon-red {
+    color: #ff3131;
+}
+.neon-toast {
+    background-color: #222 !important;
+    border: 2px solid white !important;
+    color: white !important;
+    font-size: 18px;
+    font-weight: bold;
+}

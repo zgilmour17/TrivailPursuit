@@ -1,4 +1,5 @@
 # TrivailPursuit
+
 This ain’t just any trivia game—this is THE trivia game. AI-powered, fresh questions, and banter so sharp it’ll cut you. You mess up? I’ll roast you proper. You win? Big up yourself.
 
 Download it now or get left behind like a wrong answer, bruv. 🎤🔥
@@ -12,6 +13,7 @@ Add `.env` to root of repository and add open router API key to file.
 ```
 # .env file
 REACT_APP_OPENROUTER_API_KEY = <YOUR_OPENROUTER_API_KEY>
+REACT_APP_APIURL=<YOUR_API_URL> # e.g. http://localhost:4000/
 ```
 
 # Getting Started with Create React App
@@ -21,7 +23,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Available Scripts
 
 In the project directory, you can run:
-
 
 ### `npm start`
 

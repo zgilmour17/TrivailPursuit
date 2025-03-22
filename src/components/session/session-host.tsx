@@ -20,10 +20,11 @@ const SessionHostForm: React.FC<SessionHostFormProps> = ({
     const [sessionPassword, setSessionPassword] = useState("");
     const [givenName, setGivenName] = useState("");
     const [topic, setTopic] = useState("");
+    // WebSocket
 
-    const handleHost = async () => {
-        onComplete({ sessionPassword, givenName, topic });
+    const handleHost = () => {
         // Add your join logic here
+        onComplete({ sessionPassword, givenName, topic });
     };
 
     return (

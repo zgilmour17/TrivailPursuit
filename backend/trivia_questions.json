@@ -1,0 +1,162 @@
+[
+  {
+    "question": "What is the primary ingredient in white chocolate?",
+    "choices": [
+      "Cocoa solids",
+      "Cocoa butter",
+      "Sugar",
+      "Milk"
+    ],
+    "answer": "Cocoa butter"
+  },
+  {
+    "question": "Which civilization first domesticated the cacao tree?",
+    "choices": [
+      "Aztecs",
+      "Mayans",
+      "Olmec",
+      "Inca"
+    ],
+    "answer": "Olmec"
+  },
+  {
+    "question": "Which country consumes the most chocolate per capita?",
+    "choices": [
+      "Switzerland",
+      "Belgium",
+      "United States",
+      "Germany"
+    ],
+    "answer": "Switzerland"
+  },
+  {
+    "question": "What is the name of the process that gives chocolate its taste and aroma?",
+    "choices": [
+      "Tempering",
+      "Conching",
+      "Roasting",
+      "Fermenting"
+    ],
+    "answer": "Conching"
+  },
+  {
+    "question": "What is the name of the popular chocolate bar with a nougat center?",
+    "choices": [
+      "Snickers",
+      "Mars bar",
+      "KitKat",
+      "Toblerone"
+    ],
+    "answer": "Mars bar"
+  },
+  {
+    "question": "What is the name of the process that gives chocolate a smooth texture?",
+    "choices": [
+      "Tempering",
+      "Conching",
+      "Refining",
+      "Grinding"
+    ],
+    "answer": "Conching"
+  },
+  {
+    "question": "Which company introduced the first milk chocolate bar?",
+    "choices": [
+      "Cadbury",
+      "Nestlé",
+      "Hershey's",
+      "Lindt"
+    ],
+    "answer": "Nestlé"
+  },
+  {
+    "question": "What is the name of the smallest particle in chocolate?",
+    "choices": [
+      "Cocoa nib",
+      "Sugar crystal",
+      "Milk particle",
+      "Cacao particle"
+    ],
+    "answer": "Cocoa nib"
+  },
+  {
+    "question": "Which of the following is NOT a type of chocolate?",
+    "choices": [
+      "Dark",
+      "Milk",
+      "White",
+      "Sour"
+    ],
+    "answer": "Sour"
+  },
+  {
+    "question": "What is the name of the popular chocolate-hazelnut spread?",
+    "choices": [
+      "Nutella",
+      "ChocoSpread",
+      "Hazelo",
+      "Nuti"
+    ],
+    "answer": "Nutella"
+  },
+  {
+    "question": "What is the main fat present in chocolate?",
+    "choices": [
+      "Cocoa butter",
+      "Coconut oil",
+      "Palm oil",
+      "Shea butter"
+    ],
+    "answer": "Cocoa butter"
+  },
+  {
+    "question": "Which of the following is a health benefit of dark chocolate?",
+    "choices": [
+      "High in caffeine",
+      "Low in antioxidants",
+      "High in sugar",
+      "Good for heart health"
+    ],
+    "answer": "Good for heart health"
+  },
+  {
+    "question": "What is the name of the process where chocolate is heated and cooled to set its texture?",
+    "choices": [
+      "Tempering",
+      "Conching",
+      "Aging",
+      "Curing"
+    ],
+    "answer": "Tempering"
+  },
+  {
+    "question": "Which country is the largest producer of cacao beans?",
+    "choices": [
+      "Brazil",
+      "Indonesia",
+      "Ivory Coast",
+      "Ghana"
+    ],
+    "answer": "Ivory Coast"
+  },
+  {
+    "question": "What is the name of the popular chocolate sant made by Hershey's?",
+    "choices": [
+      "Kisses",
+      "Hugs",
+      "Reese's",
+      "Almond Joy"
+    ],
+    "answer": "Kisses"
+  },
+  {
+    "question": "What is the name of the chocolate bar with a crunchy wafer interior?",
+    "choices": [
+      "KitKat",
+      "Twix",
+      "Snickers",
+      "Toblerone"
+    ],
+    "answer": "KitKat"
+  }
+]
