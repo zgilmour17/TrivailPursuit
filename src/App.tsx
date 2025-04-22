@@ -11,7 +11,12 @@ import { SessionChoice } from "./components/session/session-choice";
 import { SessionHostForm } from "./components/session/session-host";
 import { SessionJoinForm } from "./components/session/session-join";
 import { TrivailWaitingRoom } from "./components/session/waitingroom";
-import { generateRules, generateSessionQuestions } from "./lib/api-service";
+import {
+    generateRules,
+    generateSessionQuestions,
+    writeRules,
+    writeTriviaQuestions,
+} from "./lib/api-service";
 
 function App() {
     const [step, setStep] = useState<
@@ -46,7 +51,7 @@ function App() {
         hasRun.current = true; // Mark effect as executed
 
         console.log("yo triggered!!XD");
-        const WEBSOCKET_URL = "ws://localhost:4000";
+        const WEBSOCKET_URL = "ws://trivailpursuit.fly.dev:4000";
         const socket = new WebSocket(WEBSOCKET_URL);
 
         socket.onopen = () => {
@@ -162,25 +167,27 @@ function App() {
             const res = await generateSessionQuestions(topics, 15);
             const rulesres = await generateRules(20);
             //! Send trivia questions to save to jsonfile in backend
-            await fetch(
-                `${process.env.REACT_APP_APIURL}/write-trivia-questions`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ questions: res }),
-                }
-            );
+            const test = await writeTriviaQuestions(res);
+            const test2 = await writeRules(rulesres);
+            // await fetch(
+            //     `${process.env.REACT_APP_APIURL}/write-trivia-questions`,
+            //     {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify({ questions: res }),
+            //     }
+            // );
 
-            //! Send rules to save to jsonfile in backend
-            await fetch(`${process.env.REACT_APP_APIURL}/write-rules`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ rules: rulesres }),
-            });
+            // //! Send rules to save to jsonfile in backend
+            // await fetch(`${process.env.REACT_APP_APIURL}/write-rules`, {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify({ rules: rulesres }),
+            // });
 
             console.log(
                 "Trivia questions written to lib/trivia_questions.json"
